@@ -11,10 +11,36 @@
 mapboxgl.accessToken = 'pk.eyJ1Ijoib2xsZXNlZ2VyZ3JlbiIsImEiOiJja25rM2NpdWkwN2Z2MnFwbjJlbW45bHRqIn0.EXeF-Oh9YK5qGLpR_z0ruA';
 var map = new mapboxgl.Map({
 container: 'map', // container ID
-style: 'mapbox://styles/mapbox/streets-v11', // style URL
+style: 'mapbox://styles/mapbox/outdoors-v11', // style URL
 center: [16.321998712,62.38583179], // starting position [lng, lat]
-zoom: 3.6 // starting zoom
+zoom: 3.6, // starting zoom
+minZoom: 3.6
 });
+
+/*var marker = new mapboxgl.Marker()
+.setLngLat([16.321998712,62.38583179])
+.addTo(map); // add the marker to the map*/
+
+map.on('style.load', function () {
+    map.addLayer({
+            "id": "Aquifers",
+            "type": "fill",
+            "source": {
+                type: 'vector',
+                url: 'mapbox://ollesegergren.0gutz198'
+              },
+            'source-layer': 'data_och_underlag_projektuppg-4rxszy',
+            'minzoom':5,
+            "paint": {
+              "fill-color": "#e6a72e",
+              "fill-opacity": 0.5
+            }
+        });
+
+});
+
+
+
 </script>
   </body>
 </html>
