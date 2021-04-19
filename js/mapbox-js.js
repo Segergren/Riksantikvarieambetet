@@ -52,24 +52,38 @@ map.on('mouseleave', 'Riksintressen', function () {
   map.getCanvas().style.cursor = 'default';
 });
 
-$.ajaxSetup({
+/*$.ajaxSetup({
     async: false
 });
-
+*/
 
 map.on('click', 'Riksintressen', function (e) {
   selectedJSON = null;
   jsonDATA.forEach(element => {
-      if(element.RI_ID == e.features[0].properties.RI_id){
+      if(String(e.features[0].properties.RI_id).includes(String(element.RI_ID)) || String(element.RI_ID).includes(String(e.features[0].properties.RI_id))){
         selectedJSON = element;
       }
   });
   console.log(selectedJSON);
+  console.log(e.features[0].properties.RI_id);
+
+  areaInformation = "<div class='popup'><p class='name'>" + e.features[0].properties.NAMN + "</p>";
+  
+  if(selectedJSON != null && selectedJSON.hasOwnProperty('Län')){
+    areaInformation += "<p>Län: " + selectedJSON.Län  + "</p>";
+  }
+  if(selectedJSON != null && selectedJSON.hasOwnProperty('Kn')){
+    areaInformation += "<p>Kommun: " + selectedJSON.Kn + "</p>";
+  }
+  areaInformation += "</div>";
+
   new mapboxgl.Popup()
     .setLngLat(e.lngLat)
-    .setHTML("<div class='popup'><p class='name'>" + e.features[0].properties.NAMN + "</p>" + 
-             "<p>Län: " + selectedJSON.Län + "</p>"+
-             "<p>Kommun: " + selectedJSON.Kn + "</p></div>"
-             )
+    .setHTML(areaInformation)
     .addTo(map);
+
+  document.getElementById("name").innerText = e.features[0].properties.NAMN;
+  document.getElementById("id").innerText = e.features[0].properties.RI_id;
+  document.getElementById("description").innerText = selectedJSON.Uttryck_för_RI;
+
 });
