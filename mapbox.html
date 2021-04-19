@@ -1,46 +1,15 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src='https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js'></script>
     <link href='https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css' rel='stylesheet' />
+    <link rel="stylesheet" href="styles/style.css">
+
     <title>MapBox example</title>
   </head>
   <body>
-    <div id='map' style='width: 100%; height: 600px;'></div>
-<script>
-mapboxgl.accessToken = 'pk.eyJ1Ijoib2xsZXNlZ2VyZ3JlbiIsImEiOiJja25rM2NpdWkwN2Z2MnFwbjJlbW45bHRqIn0.EXeF-Oh9YK5qGLpR_z0ruA';
-var map = new mapboxgl.Map({
-container: 'map', // container ID
-style: 'mapbox://styles/mapbox/outdoors-v11', // style URL
-center: [16.321998712,62.38583179], // starting position [lng, lat]
-zoom: 3.6, // starting zoom
-minZoom: 3.6
-});
-
-/*var marker = new mapboxgl.Marker()
-.setLngLat([16.321998712,62.38583179])
-.addTo(map); // add the marker to the map*/
-
-map.on('style.load', function () {
-    map.addLayer({
-            "id": "Aquifers",
-            "type": "fill",
-            "source": {
-                type: 'vector',
-                url: 'mapbox://ollesegergren.0gutz198'
-              },
-            'source-layer': 'data_och_underlag_projektuppg-4rxszy',
-            'minzoom':5,
-            "paint": {
-              "fill-color": "#e6a72e",
-              "fill-opacity": 0.5
-            }
-        });
-
-});
-
-
-
-</script>
+    <div id='map' style='width: 100%; height: 450px;'></div>
+    <script src='js/mapbox-js.js'></script>
   </body>
 </html>

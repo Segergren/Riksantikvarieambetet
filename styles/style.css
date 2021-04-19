@@ -1,5 +1,10 @@
-p{
-    max-width: 100px;
+body{
+  margin: 0;
 }
-
-#mapid { height: 180px; }
+.popup p{
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.popup .name {
+  font-weight: bold;
+}
