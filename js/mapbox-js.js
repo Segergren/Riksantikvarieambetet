@@ -6,7 +6,7 @@ center: [16.321998712,62.38583179],
 zoom: 6,
 minZoom: 3.6
 });
-
+jsonDATA = null;
 map.on('style.load', function () {
     map.addLayer({
             "id": "Riksintressen",
@@ -23,6 +23,9 @@ map.on('style.load', function () {
             }
         });
     map.getCanvas().style.cursor = 'default';
+    $.getJSON('https://o11.se/RAA/data.json', function(data){
+        jsonDATA = data.data;
+    });
 });
 var hoveredRiksintresse = null;
 
@@ -55,9 +58,8 @@ $.ajaxSetup({
 
 
 map.on('click', 'Riksintressen', function (e) {
-$.getJSON('https://o11.se/RAA/data.json', function(data){
   selectedJSON = null;
-  data.data.forEach(element => {
+  jsonDATA.forEach(element => {
       if(element.RI_ID == e.features[0].properties.RI_id){
         selectedJSON = element;
       }
@@ -70,5 +72,4 @@ $.getJSON('https://o11.se/RAA/data.json', function(data){
              "<p>Kommun: " + selectedJSON.Kn + "</p></div>"
              )
     .addTo(map);
-});
 });
