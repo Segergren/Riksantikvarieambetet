@@ -22,15 +22,20 @@ map.on('style.load', function () {
               "fill-opacity": 0.5
             }
         });
+    map.addControl(new mapboxgl.NavigationControl());
     map.getCanvas().style.cursor = 'default';
     $.getJSON('https://o11.se/RAA/data.json', function(data){
         jsonDATA = data.data;
     });
+
+
+    document.getElementsByClassName("mapboxgl-ctrl-logo")[0].remove();
+    document.getElementsByClassName("mapboxgl-ctrl-bottom-right")[0].remove();
 });
 var hoveredRiksintresse = null;
 
 map.on('mousemove', 'Riksintressen', function (e) {
-  console.log("Mouse move!")
+  
   if (e.features.length > 0) {
     if (hoveredRiksintresse !== null) {
       
@@ -41,6 +46,11 @@ map.on('mousemove', 'Riksintressen', function (e) {
     }
     hoveredRiksintresse = e.features[0].properties.RI_id;
     map.getCanvas().style.cursor = 'pointer';
+    var overlay = document.getElementById('map-overlay');
+    overlay.innerHTML = "<p><b>" + e.features[0].properties.NAMN + "</b></p>" + 
+                        "<a>" + e.features[0].properties.RI_id + "</a>";
+
+    overlay.style.display = 'block';
       map.setFeatureState(
         { source: 'Riksintressen', id: hoveredRiksintresse, sourceLayer: "data_och_underlag_projektuppg-4rxszy"},
         { hover: true }
@@ -50,12 +60,9 @@ map.on('mousemove', 'Riksintressen', function (e) {
 
 map.on('mouseleave', 'Riksintressen', function () {
   map.getCanvas().style.cursor = 'default';
+  var overlay = document.getElementById('map-overlay');
+  overlay.style.display = 'none';
 });
-
-/*$.ajaxSetup({
-    async: false
-});
-*/
 
 map.on('click', 'Riksintressen', function (e) {
   selectedJSON = null;
@@ -84,6 +91,17 @@ map.on('click', 'Riksintressen', function (e) {
 
   document.getElementById("name").innerText = e.features[0].properties.NAMN;
   document.getElementById("id").innerText = e.features[0].properties.RI_id;
-  document.getElementById("description").innerText = selectedJSON.Uttryck_för_RI;
-
+  if(selectedJSON != null && selectedJSON.hasOwnProperty('Uttryck_för_RI')){
+    document.getElementById("description").innerText = selectedJSON.Uttryck_för_RI;
+  }
+  else{
+    if(selectedJSON.hasOwnProperty('Motivering')){
+      document.getElementById("description").innerText = "Information exkluderad.\n" + selectedJSON.Motivering;
+    }
+    else{
+      document.getElementById("description").innerText = "Information exkluderad.";
+    }
+  }
+  var overlay = document.getElementById('map-overlay');
+  overlay.style.display = 'none';
 });
