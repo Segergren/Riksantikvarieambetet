@@ -3,9 +3,11 @@
   https://docs.mapbox.com/mapbox-gl-js/api/
 */
 
+//import RI_Info from "RI_Info.js";
+
 //API-nyckel
 mapboxgl.accessToken = 'pk.eyJ1Ijoib2xsZXNlZ2VyZ3JlbiIsImEiOiJja25rM2NpdWkwN2Z2MnFwbjJlbW45bHRqIn0.EXeF-Oh9YK5qGLpR_z0ruA';
-
+let pointInformation = [];
 /*Skapar en ny karta med "outdoors" som backgrundskarta.
   Användaren startar från mitten av Sverige med zoom 6
 */
@@ -17,7 +19,7 @@ zoom: 6,
 minZoom: 3.6
 });
 
-
+//Instansvariabel som ska lagra infromationsdata om riksintressen
 jsonDATA = null;
 
 //När bakgrundskartan har laddat klart
@@ -46,6 +48,12 @@ map.on('style.load', function () {
     //Hämtar all informationsdata och returnerar det till instansvariabeln jsonDATA
     $.getJSON('https://o11.se/RAA/data.json', function(data){
         jsonDATA = data.data;
+
+        //Gör om data från JSON till riInfo-objekt
+        jsonDATA.forEach(element => {
+          var tempElement = new riInfo(element);
+          pointInformation.push(tempElement);
+        });
     });
 
     //Tar bort MapBox-logotypen
@@ -101,33 +109,45 @@ map.on('mouseleave', 'Riksintressen', function () {
 //När användaren klickar på en polygon (riksintresse)
 map.on('click', 'Riksintressen', function (e) {
   //Skapar en funktionsvariabel
-  selectedJSON = null;
+  var selectedInformation = null;
 
   //Itererar igenom alla riksintressen i JSON-filen
-  jsonDATA.forEach(element => {
+  pointInformation.forEach(element => {
       //Om riksintressets ID stämmer överens med riksintressets ID vid Index.
-      if(String(e.features[0].properties.RI_id).includes(String(element.RI_ID)) || String(element.RI_ID).includes(String(e.features[0].properties.RI_id))){
+      if(String(e.features[0].properties.RI_id).includes(String(element.id)) || String(element.id).includes(String(e.features[0].properties.RI_id))){
         //Sätt riksintresset vid index till funktionsvariabeln selectedJSON.
-        selectedJSON = element;
+        selectedInformation = element;
       }
   });
 
   //Loggar nuvarande polygon, TA BORT SENARE
-  console.log(selectedJSON);
+  console.log(selectedInformation);
   console.log(e.features[0].properties.RI_id);
 
   //Ändrar titeln till riksintressets namn
   areaInformation = "<div class='popup'><p class='name'>" + e.features[0].properties.NAMN + "</p>";
-  
+
+
+  if(selectedInformation != null && selectedInformation.kulturmiljötyper != false){
+    //Ändrar miljötypen till riksintressets mijötyp
+    
+    if(selectedInformation.kulturmiljötyper.includes(" ") || selectedInformation.kulturmiljötyper.includes(",")){
+      areaInformation += "<p>Miljötyper: " + selectedInformation.kulturmiljötyper  + "</p>";
+    }
+    else{
+      areaInformation += "<p>Miljötyp: " + selectedInformation.kulturmiljötyper  + "</p>";
+    }
+  }
+
   //Om information gällande län finns tillgängligt
-  if(selectedJSON != null && selectedJSON.hasOwnProperty('Län')){
+  if(selectedInformation != null && selectedInformation.län != false){
     //Ändrar län-texten till riksintressets län
-    areaInformation += "<p>Län: " + selectedJSON.Län  + "</p>";
+    areaInformation += "<p>Län: " + selectedInformation.län  + "</p>";
   }
   //Om information gällande kommun finns tillgängligt
-  if(selectedJSON != null && selectedJSON.hasOwnProperty('Kn')){
+  if(selectedInformation != null && selectedInformation.kommun != false){
     //Ändrar kommun-texten till riksintressets kommun
-    areaInformation += "<p>Kommun: " + selectedJSON.Kn + "</p>";
+    areaInformation += "<p>Kommun: " + selectedInformation.kommun + "</p>";
   }
   areaInformation += "</div>";
 
@@ -143,15 +163,21 @@ map.on('click', 'Riksintressen', function (e) {
   document.getElementById("id").innerText = e.features[0].properties.RI_id;
 
   //Om beskrivning gällande riksintresset är tillgängligt
-  if(selectedJSON != null && selectedJSON.hasOwnProperty('Uttryck_för_RI')){
+  if(selectedInformation != null && selectedInformation.uttryck != false){
     //Byt beskrivningen under kartan till riksintressets beskrivning
-    document.getElementById("description").innerText = selectedJSON.Uttryck_för_RI;
+    document.getElementById("description").innerText = selectedInformation.uttryck;
   }
   else{
-    //Om motivering till "varför beskrivning ej finns tillgängligt", finns tillgänglig
-    if(selectedJSON.hasOwnProperty('Motivering')){
-      //Skriv ut att beskrivning exkluderas samt motivering
-      document.getElementById("description").innerText = "Information exkluderad.\n" + selectedJSON.Motivering;
+    if(selectedInformation != null){
+      //Om motivering till "varför beskrivning ej finns tillgängligt", finns tillgänglig
+      if(selectedInformation.motivering != false){
+        //Skriv ut att beskrivning exkluderas samt motivering
+        document.getElementById("description").innerText = "Information exkluderad.\n" + selectedInformation.motivering;
+      }
+      else{
+        //Skriv ut att beskrivning exkluderas
+        document.getElementById("description").innerText = "Information exkluderad.";
+      }
     }
     else{
       //Skriv ut att beskrivning exkluderas
