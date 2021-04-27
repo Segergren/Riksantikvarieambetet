@@ -1,4 +1,4 @@
-class riInfo {
+class NationalInterest {
     constructor(element) {
         this.namn = element.Namn_RI;
         this.id = element.RI_ID;
@@ -16,7 +16,5 @@ class riInfo {
         else{
             this.utredningsområde = false;
         }
-        
-        
     }
 }
