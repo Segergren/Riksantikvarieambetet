@@ -69,9 +69,6 @@ function HideHoverInfo(){
 }
 
 
-
-
-
 //Kontrollerar om muspekaren går över ett riksintresse.
 map.on('mousemove', 'Riksintressen', function (e) {
     let elementInformation = e.features[0].properties;
