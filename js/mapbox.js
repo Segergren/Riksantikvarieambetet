@@ -35,6 +35,15 @@ function FillMap(){
 });
 }
 
+function createTriggerOnLoad(){
+  //När bakgrundskartan har laddat klart
+  map.on('style.load', function () {
+      FillMap();
+      AddNavigationControl();
+      ChangeCursor('default');
+      GetData();
+  });
+
 //Lägger till zoom-kontroller uppe till höger.
 function AddNavigationControl(){
     map.addControl(new mapboxgl.NavigationControl());
@@ -45,56 +54,51 @@ function ChangeCursor(cursorType){
     map.getCanvas().style.cursor = cursorType;
 }
 
+//Tar in namn och id över hoverad riksintresse samt vissar upp den.
 function ShowHoverInfo(name, id){
-          //Ändrar texten på hover-rutan uppe i vänstra hörnet till namn samt ID.
-          let overlay = document.getElementById('map-overlay');
-          overlay.innerHTML = `<p><b> ${name} + </b></p> 
-                              <a> ${id} </a>`;
-          //Visar hover-rutan
-          overlay.style.display = 'block';
+    let overlay = document.getElementById('map-overlay');
+    overlay.innerHTML = `<p><b>${name}</b></p> 
+                         <p>${id}</p>`;
+    overlay.style.display = 'block';
 }
 
+//Gömmer hover-rutan
 function HideHoverInfo(){
     let overlay = document.getElementById('map-overlay');
     overlay.style.display = 'none';
 }
 
-function createTriggerOnLoad(){
-//När bakgrundskartan har laddat klart
-map.on('style.load', function () {
-    FillMap();
-    AddNavigationControl();
-    ChangeCursor('default');
-    GetData();
-});
 
-//När användaren rör musen 
+
+
+
+//Kontrollerar om muspekaren går över ett riksintresse.
 map.on('mousemove', 'Riksintressen', function (e) {
     let elementInformation = e.features[0].properties;
-    //Om musen är över ett riksintresse
     if (e.features.length > 0) {
-      //Byter muspekare för att visa användaren att det går att klicka på polygonen
       ChangeCursor('pointer');
       ShowHoverInfo(elementInformation.NAMN, elementInformation.RI_id);
     }
   });
+
 
 //När användaren rör musen ifrån ett riksintresse, 
 //byter muspekare till deafault peakare.
 //Samt gömmer hover-rutan
 map.on('mouseleave', 'Riksintressen', function () {
     ChangeCursor('default');
+    HideHoverInfo();
 });
 
   //När användaren klickar på en polygon (riksintresse)
 map.on('click', 'Riksintressen', function (e) {
-    //Skapar en funktionsvariabel
+
     var selectedInformation = null;
-  
+    let elementInformation = e.features[0].properties;
     //Itererar igenom alla riksintressen i JSON-filen
     NATIONAL_INTERESTS.forEach(element => {
         //Om riksintressets ID stämmer överens med riksintressets ID vid Index.
-        if(String(e.features[0].properties.RI_id).includes(String(element.id)) || String(element.id).includes(String(e.features[0].properties.RI_id))){
+        if(String(elementInformation.RI_id).includes(String(element.id)) || String(element.id).includes(String(elementInformation.RI_id))){
           //Sätt riksintresset vid index till funktionsvariabeln selectedJSON.
           selectedInformation = element;
         }
