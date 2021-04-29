@@ -9,6 +9,27 @@ function GetData(){
 //Lägger in NationalInterest-elementen till nationalInterests-arrayen
 function LoadDataToArray(jsonData){
     jsonData.forEach(element => {
-        NATIONAL_INTERESTS.push(new NationalInterest(element));
+        if(element.hasOwnProperty('RI_ID')){
+            //X
+            let elementNumbers = element.RI_ID.replace(/[^0-9]/g, "");
+            if(elementNumbers <= 9){
+                element.RI_ID = element.RI_ID.replace(elementNumbers, "0" + elementNumbers);
+            }
+            
+            element.RI_ID = element.RI_ID.replace(" och ",", ");
+            let RI_IDArray = element.RI_ID.split(", ");
+            if(RI_IDArray.length > 1){
+                console.log(RI_IDArray);
+            }
+
+            RI_IDArray.forEach(RI_IDItem => {
+                tempElement = element;
+                tempElement.RI_ID = RI_IDItem;
+                NATIONAL_INTERESTS.push(new NationalInterest(tempElement));
+            });
+        }
+        else{
+            NATIONAL_INTERESTS.push(new NationalInterest(element));
+        } 
     });
 }

@@ -42,6 +42,8 @@ function createTriggerOnLoad() {
     AddNavigationControl();
     ChangeCursor('default');
     GetData();
+
+    //console.log(map.getStyle().layers[121].);
   });
 
   //Lägger till zoom-kontroller uppe till höger.
@@ -73,7 +75,7 @@ function createTriggerOnLoad() {
   function FindConnectedInformation(e) {
     let selectedInformation;
     NATIONAL_INTERESTS.forEach(element => {
-      if (String(e.RI_id).includes(String(element.id)) || String(element.id).includes(String(e.RI_id))) {
+      if (String(e.RI_id) == String(element.id)) {
         selectedInformation = element;
       }
     });
@@ -85,7 +87,7 @@ function createTriggerOnLoad() {
     let nationalInterestInformation = FindConnectedInformation(elementInformation);
     ShowPopUp(nationalInterestInformation, e);
 
-    ShowDe
+    
   }
 
   function ShowPopUp(nationalInterestInformation, e){
@@ -114,7 +116,8 @@ function createTriggerOnLoad() {
       popupInformation += `<p>Kommun: ${nationalInterestInformation.kommun}</p>`;
     }
 
-    let popupHTMLInformation = `<div class='popup'><p class='name'>${nationalInterestInformation.namn}</p>${popupInformation}</div>`;
+
+    let popupHTMLInformation = `<div class='popup'><p class='name'>${nationalInterestInformation.namn}</p>${popupInformation} <p> ID: ${nationalInterestInformation.id}</p></div>`;
   
     //Lägger till en popup med namn, län, och kommun där användarens muspekare står
     new mapboxgl.Popup()
