@@ -11,7 +11,7 @@ function CreateNewMap() {
   return map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/outdoors-v11',
-    center: [16.321998712, 62.38583179],
+    center: [16.321998712, 59.38583179],
     zoom: 6,
     minZoom: 3.6
   });
@@ -19,31 +19,45 @@ function CreateNewMap() {
 
 //Fyller kartan med polygoner
 function FillMap() {
+  /*map.addLayer({
+   "id": "Riksintressen",
+   "type": "fill",
+   "source": {
+     type: 'vector',
+     url: 'mapbox://ollesegergren.0gutz198'
+   },
+   'source-layer': 'data_och_underlag_projektuppg-4rxszy',
+   'minzoom': 5,
+   "paint": {
+     "fill-color": "#e6a72e",
+     "fill-opacity": 0.5
+   }
+ });*/
+
+
   map.addLayer({
-    "id": "Riksintressen",
-    "type": "fill",
-    "source": {
-      type: 'vector',
-      url: 'mapbox://ollesegergren.0gutz198'
-    },
-    'source-layer': 'data_och_underlag_projektuppg-4rxszy',
-    'minzoom': 5,
-    "paint": {
-      "fill-color": "#e6a72e",
-      "fill-opacity": 0.5
-    }
-  });
+     'id': 'Riksintressen',
+     'type': 'fill',
+     "source": {
+       type: 'geojson',
+       data: 'https://o11.se/RAA/geojson.geojson'
+     },
+     'minzoom': 5,
+     "paint": {
+       "fill-color": "#e6a72e",
+       "fill-opacity": 0.5
+     }
+   });
 }
 
 function createTriggerOnLoad() {
+
   //När bakgrundskartan har laddat klart
   map.on('style.load', function () {
     FillMap();
     AddNavigationControl();
     ChangeCursor('default');
     GetData();
-
-    //console.log(map.getStyle().layers[121].);
   });
 
   //Lägger till zoom-kontroller uppe till höger.
@@ -87,38 +101,38 @@ function createTriggerOnLoad() {
     let nationalInterestInformation = FindConnectedInformation(elementInformation);
     ShowPopUp(nationalInterestInformation, e);
 
-    
+
   }
 
-  function ShowPopUp(nationalInterestInformation, e){
+  function ShowPopUp(nationalInterestInformation, e) {
 
     let popupInformation = "";
 
-    if(nationalInterestInformation != null && nationalInterestInformation.kulturmiljötyper != false){
-      
+    if (nationalInterestInformation != null && nationalInterestInformation.kulturmiljötyper != false) {
+
       //Ändrar miljötypen till riksintressets miljötyp
-      if(nationalInterestInformation.kulturmiljötyper.includes(" ") || nationalInterestInformation.kulturmiljötyper.includes(",")){
+      if (nationalInterestInformation.kulturmiljötyper.includes(" ") || nationalInterestInformation.kulturmiljötyper.includes(",")) {
         popupInformation += `<p>Miljötyper: ${nationalInterestInformation.kulturmiljötyper}</p>`;
       }
-      else{
+      else {
         popupInformation += `<p>Miljötyp: ${nationalInterestInformation.kulturmiljötyper}</p>`;
       }
     }
-  
+
     //Om information gällande län finns tillgängligt
-    if(nationalInterestInformation != null && nationalInterestInformation.län != false){
+    if (nationalInterestInformation != null && nationalInterestInformation.län != false) {
       //Ändrar län-texten till riksintressets län
       popupInformation += `<p>Län: ${nationalInterestInformation.län}</p>`;
     }
     //Om information gällande kommun finns tillgängligt
-    if(nationalInterestInformation != null && nationalInterestInformation.kommun != false){
+    if (nationalInterestInformation != null && nationalInterestInformation.kommun != false) {
       //Ändrar kommun-texten till riksintressets kommun
       popupInformation += `<p>Kommun: ${nationalInterestInformation.kommun}</p>`;
     }
 
 
     let popupHTMLInformation = `<div class='popup'><p class='name'>${nationalInterestInformation.namn}</p>${popupInformation} <p> ID: ${nationalInterestInformation.id}</p></div>`;
-  
+
     //Lägger till en popup med namn, län, och kommun där användarens muspekare står
     new mapboxgl.Popup()
       .setLngLat(e.lngLat)
