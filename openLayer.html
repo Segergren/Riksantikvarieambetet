@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
     <style>
       .map {
@@ -14,19 +16,14 @@
   <body>
     <h2>My Map</h2>
     <div id="map" class="map"></div>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.3/proj4.js"></script>
+    <script src='js/openlayers.js'></script>
+    <script src='js/main.js'></script>
+    <script src='js/data-handler.js'></script>
+    <script src="js/data-search.js"></script>
+    <script src='js/national-interest.js'></script>
+    <script src='js/interaction.js'></script>
     <script type="text/javascript">
-      var map = new ol.Map({
-        target: 'map',
-        layers: [
-          new ol.layer.Tile({
-            source: new ol.source.OSM()
-          })
-        ],
-        view: new ol.View({
-          center: ol.proj.fromLonLat([37.41, 8.82]),
-          zoom: 4
-        })
-      });
     </script>
   </body>
 </html>
