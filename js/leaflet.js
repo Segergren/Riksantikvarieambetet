@@ -141,3 +141,11 @@ function ShowHoverInfo(name, id) {
                        <p>${id}</p>`;
   overlay.style.display = 'block';
 }
+
+
+/* // UI EVENTS \\ */
+const searchElement = document.querySelector('#search');
+searchElement.addEventListener('change', (event) => {
+  searchNameAndID(event.target.value);
+});
+
