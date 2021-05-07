@@ -10,8 +10,9 @@ body{
 }
 
 #mapid{
-    float: left;
-    max-width: 70%; 
+    margin:0;
+    float: right;
+    max-width: 131.5em; 
     min-height: 50em !important;
 }
 
@@ -37,10 +38,11 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
 
 /* SIDEPANEL */
 .sidepanel{
+  margin:0;
   float: left;
-  min-width: 17.5em;
+  max-width: 20em;
   min-height: 37.5em;
-  background-color: red;
+  background-color: gray;
   overflow: hidden;
 }
 
@@ -48,11 +50,18 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
   float: left;
   margin: 0.5em;
   width: 100%;
-  background-color: blue;
 }
 .sidepanel .selection input{
   float: left;
-  width: 90%;
+  min-width: 90%;
+  padding: 6px;
+  font-size: 17px;
+  border: none;
+}
+
+.sidepanel select{
+  float: left;
+  width: 93%;
   padding: 6px;
   font-size: 17px;
   border: none;

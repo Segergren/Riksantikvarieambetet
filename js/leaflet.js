@@ -1,5 +1,5 @@
 function createTriggerOnLoad() {
-  GetData();
+  GetRiksintresseData();
 }
 
 //Skapar en ny mapp med EPSG:3006
@@ -31,13 +31,36 @@ function AddBackgroundMap() {
     attribution: 'Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, Imagery &copy; 2013 <a href="http://www.kartena.se/">Kartena</a>'
   }).addTo(map);
   FillMapWithGeojson();
+  FillMapWithCounties();
 }
 
-var style = {
-  "color": "#ff7800",
-  "weight": 5,
-  "opacity": 0.65
-};
+function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+//Fyller kartan med geodata från geojson
+function FillMapWithCounties() {
+
+  var geoJsonStyle = {
+    color: '#0800b3',
+    weight: 1,
+    opacity: 0.3,
+    fillColor: '#0800b3',
+    fillOpacity: 0
+  };
+
+  $.getJSON("https://o11.se/RAA/län.geojson", function (data) {
+    L.Proj.geoJson(data, {
+      onEachFeature: onEachFeatureCounties,
+      style: geoJsonStyle
+    }).addTo(map);
+  });
+}
 
 //Fyller kartan med geodata från geojson
 function FillMapWithGeojson() {
@@ -51,7 +74,7 @@ function FillMapWithGeojson() {
 
   $.getJSON("https://o11.se/RAA/geojson.geojson", function (data) {
     L.Proj.geoJson(data, {
-      onEachFeature: onEachFeature,
+      onEachFeature: onEachFeatureGeojson,
       style: geoJsonStyle
     }).addTo(map);
   });
@@ -67,13 +90,25 @@ function resetHighlight(e) {
 }
 
 //Lägger till onhover och onclick-events
-function onEachFeature(feature, layer) {
+function onEachFeatureCounties(feature, layer) {
+  var opt = document.createElement('option');
+  opt.innerHTML = layer.feature.properties.LnNamn + " län";
+  opt.value = layer.feature.properties.LnKod;
+  countyElement.appendChild(opt);
+  LIST_OF_COUNTIES.push(layer);
+}
+
+//Lägger till onhover och onclick-events
+function onEachFeatureGeojson(feature, layer) {
   layer.on({
     mouseover: highlightFeature,
     mouseout: resetHighlight,
     click: OnClickEvent,
   });
+
+  LIST_OF_LAYERS.push(layer);
 }
+
 
 //Hittar informationen kopplat till en geodata
 function FindConnectedInformation(e) {
@@ -142,10 +177,37 @@ function ShowHoverInfo(name, id) {
   overlay.style.display = 'block';
 }
 
+function FlyToRiksintresse(informationElement) {
+  geojsonElement = null;
+  LIST_OF_LAYERS.forEach(layer => {
+
+    if (layer.feature.properties.RI_id == informationElement.id || layer.feature.properties.NAMN == informationElement.namn) {
+      geojsonElement = layer;
+    }
+  });
+
+  map.flyToBounds(geojsonElement._bounds);
+}
+
+function FlyToCounty(countyID) {
+  geojsonElement = null;
+  LIST_OF_COUNTIES.forEach(layer => {
+    if (String(layer.feature.properties.LnKod) == String(countyID)) {
+      geojsonElement = layer;
+    }
+  });
+  map.flyToBounds(geojsonElement._bounds);
+}
+
 
 /* // UI EVENTS \\ */
 const searchElement = document.querySelector('#search');
 searchElement.addEventListener('change', (event) => {
-  searchNameAndID(event.target.value);
+  let informationElement = searchNameAndID(event.target.value);
+  FlyToRiksintresse(informationElement);
 });
 
+const countyElement = document.querySelector('#county');
+countyElement.addEventListener('change', (event) => {
+  FlyToCounty(countyElement.value);
+});

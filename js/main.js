@@ -1,5 +1,6 @@
 const NATIONAL_INTERESTS = [];
+let LIST_OF_COUNTIES = [];
+let LIST_OF_LAYERS = [];
 var map = CreateNewMap();
 AddBackgroundMap();
-//var OVERLAY = document.getElementById('map-overlay');
 window.onload = createTriggerOnLoad();
