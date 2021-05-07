@@ -32,6 +32,8 @@ function AddBackgroundMap() {
   }).addTo(map);
   FillMapWithGeojson();
   FillMapWithCounties();
+  FillMapWithMunicipality();
+  FillMapWithLandscape();
 }
 
 function getRandomColor() {
@@ -57,6 +59,42 @@ function FillMapWithCounties() {
   $.getJSON("https://o11.se/RAA/län.geojson", function (data) {
     L.Proj.geoJson(data, {
       onEachFeature: onEachFeatureCounties,
+      style: geoJsonStyle
+    }).addTo(map);
+  });
+}
+
+
+function FillMapWithLandscape() {
+
+  var geoJsonStyle = {
+    color: '#0800b3',
+    weight: 1,
+    opacity: 0,
+    fillColor: '#0800b3',
+    fillOpacity: 0
+  };
+
+  $.getJSON("https://o11.se/RAA/landskap.geojson", function (data) {
+    L.Proj.geoJson(data, {
+      onEachFeature: onEachFeatureLandscape,
+      style: geoJsonStyle
+    }).addTo(map);
+  });
+}
+
+function FillMapWithMunicipality() {
+  var geoJsonStyle = {
+    color: '#7f0000',
+    weight: 1,
+    opacity: 0,
+    fillColor: '#7f0000',
+    fillOpacity: 0
+  };
+
+  $.getJSON("https://o11.se/RAA/kommun.geojson", function (data) {
+    L.Proj.geoJson(data, {
+      onEachFeature: onEachFeatureMunicipality,
       style: geoJsonStyle
     }).addTo(map);
   });
@@ -98,6 +136,24 @@ function onEachFeatureCounties(feature, layer) {
   LIST_OF_COUNTIES.push(layer);
 }
 
+function onEachFeatureMunicipality(feature, layer) {
+  var opt = document.createElement('option');
+  opt.innerHTML = layer.feature.properties.KnNamn;
+  opt.value = layer.feature.properties.KnKod;
+  municipalityElement.appendChild(opt);
+  LIST_OF_MUNICIPALITY.push(layer);
+}
+
+//Lägger till onhover och onclick-events
+function onEachFeatureLandscape(feature, layer) {
+  console.log(layer);
+  var opt = document.createElement('option');
+  opt.innerHTML = layer.feature.properties.landskap;
+  opt.value = layer.feature.properties.landskapskod;
+  landscapeElement.appendChild(opt);
+  LIST_OF_LANDSCAPE.push(layer);
+}
+
 //Lägger till onhover och onclick-events
 function onEachFeatureGeojson(feature, layer) {
   layer.on({
@@ -105,7 +161,6 @@ function onEachFeatureGeojson(feature, layer) {
     mouseout: resetHighlight,
     click: OnClickEvent,
   });
-
   LIST_OF_LAYERS.push(layer);
 }
 
@@ -199,6 +254,25 @@ function FlyToCounty(countyID) {
   map.flyToBounds(geojsonElement._bounds);
 }
 
+function FlyToMunicipality(municipalityID) {
+  geojsonElement = null;
+  LIST_OF_MUNICIPALITY.forEach(layer => {
+    if (String(layer.feature.properties.KnKod) == String(municipalityID)) {
+      geojsonElement = layer;
+    }
+  });
+  map.flyToBounds(geojsonElement._bounds);
+}
+
+function FlyToLandscape(landscapeID) {
+  geojsonElement = null;
+  LIST_OF_LANDSCAPE.forEach(layer => {
+    if (String(layer.feature.properties.landskapskod) == String(landscapeID)) {
+      geojsonElement = layer;
+    }
+  });
+  map.flyToBounds(geojsonElement._bounds);
+}
 
 /* // UI EVENTS \\ */
 const searchElement = document.querySelector('#search');
@@ -210,4 +284,14 @@ searchElement.addEventListener('change', (event) => {
 const countyElement = document.querySelector('#county');
 countyElement.addEventListener('change', (event) => {
   FlyToCounty(countyElement.value);
+});
+
+const municipalityElement = document.querySelector('#municipality');
+municipalityElement.addEventListener('change', (event) => {
+  FlyToMunicipality(municipalityElement.value);
+});
+
+const landscapeElement = document.querySelector('#landscape');
+landscapeElement.addEventListener('change', (event) => {
+  FlyToLandscape(landscapeElement.value);
 });
