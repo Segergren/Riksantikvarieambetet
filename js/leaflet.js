@@ -19,6 +19,7 @@ function CreateNewMap() {
       worldCopyJump: false
     });
   map.setView([59.33258, 18.0649], 4);
+
   return map;
 }
 
@@ -30,19 +31,11 @@ function AddBackgroundMap() {
     continuousWorld: true,
     attribution: 'Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, Imagery &copy; 2013 <a href="http://www.kartena.se/">Kartena</a>'
   }).addTo(map);
+  
   FillMapWithGeojson();
+  //FillMapWithLandscape();
   FillMapWithCounties();
-  FillMapWithMunicipality();
-  FillMapWithLandscape();
-}
-
-function getRandomColor() {
-  var letters = '0123456789ABCDEF';
-  var color = '#';
-  for (var i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
+  FillMapWithMunicipality();  
 }
 
 //Fyller kartan med geodata från geojson
@@ -55,7 +48,6 @@ function FillMapWithCounties() {
     fillColor: '#0800b3',
     fillOpacity: 0
   };
-
   $.getJSON("https://o11.se/RAA/län.geojson", function (data) {
     L.Proj.geoJson(data, {
       onEachFeature: onEachFeatureCounties,
@@ -63,7 +55,6 @@ function FillMapWithCounties() {
     }).addTo(map);
   });
 }
-
 
 function FillMapWithLandscape() {
 
@@ -79,8 +70,7 @@ function FillMapWithLandscape() {
     L.Proj.geoJson(data, {
       onEachFeature: onEachFeatureLandscape,
       style: geoJsonStyle
-    }).addTo(map);
-  });
+    }).addTo(map)});
 }
 
 function FillMapWithMunicipality() {
@@ -91,13 +81,13 @@ function FillMapWithMunicipality() {
     fillColor: '#7f0000',
     fillOpacity: 0
   };
-
   $.getJSON("https://o11.se/RAA/kommun.geojson", function (data) {
     L.Proj.geoJson(data, {
       onEachFeature: onEachFeatureMunicipality,
       style: geoJsonStyle
     }).addTo(map);
   });
+
 }
 
 //Fyller kartan med geodata från geojson
@@ -109,13 +99,13 @@ function FillMapWithGeojson() {
     fillColor: '#e6a72e',
     fillOpacity: 0.4
   };
-
   $.getJSON("https://o11.se/RAA/geojson.geojson", function (data) {
     L.Proj.geoJson(data, {
       onEachFeature: onEachFeatureGeojson,
       style: geoJsonStyle
     }).addTo(map);
   });
+  
 }
 
 //TODO: Funktionen gömmer sig bakom kartan.
@@ -146,11 +136,11 @@ function onEachFeatureMunicipality(feature, layer) {
 
 //Lägger till onhover och onclick-events
 function onEachFeatureLandscape(feature, layer) {
-  console.log(layer);
   var opt = document.createElement('option');
   opt.innerHTML = layer.feature.properties.landskap;
   opt.value = layer.feature.properties.landskapskod;
   landscapeElement.appendChild(opt);
+  //layer.bringToBack();
   LIST_OF_LANDSCAPE.push(layer);
 }
 
@@ -161,6 +151,7 @@ function onEachFeatureGeojson(feature, layer) {
     mouseout: resetHighlight,
     click: OnClickEvent,
   });
+  //layer.bringToFront();
   LIST_OF_LAYERS.push(layer);
 }
 
