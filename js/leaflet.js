@@ -6,6 +6,7 @@ var resetStyle = {
   fillOpacity: 0.4
 };
 
+let currentlyViewingAInterest = null;
 
 function createTriggerOnLoad() {
   GetRiksintresseData();
@@ -123,8 +124,10 @@ function highlightFeature(e) {
 }
 
 function resetHighlight(e) {
-  HideHoverInfo();
-  resetLayer(e.target);
+  if(currentlyViewingAInterest != e.target){
+    HideHoverInfo();
+    resetLayer(e.target);
+  }
 }
 
 //Lägger till onhover och onclick-events
@@ -179,6 +182,7 @@ function FindConnectedInformation(e) {
 
 function OnClickEvent(e) {
   let nationalInterestInformation = FindConnectedInformation(e);
+  currentlyViewingAInterest = e.target;
   ShowPopUp(nationalInterestInformation, e);
 }
 
@@ -198,7 +202,6 @@ function resetLayer(layer){
 function resetAllLayers(){
   map.eachLayer(function(layer){
     if(layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))){
-      console.log(layer);
       layer.setStyle(
         resetStyle
       );
@@ -211,18 +214,21 @@ function ShowPopUp(nationalInterestInformation, e) {
   let popupHTMLInformation = `<div class='popup'><p class='name'>${nationalInterestInformation.name}</p><p>ID: ${nationalInterestInformation.id}</p><a href="#information">Visa mer</a></div>`;
 
   //Lägger till en popup med namn, län, och kommun där användarens muspekare står
-  L.popup()
+  let popup = L.popup()
     .setLatLng(e.latlng)
     .setContent(popupHTMLInformation)
     .openOn(map);
+
+  popup.on('remove', function() {
+    currentlyViewingAInterest = null;
+    resetHighlight(e);
+    HideMoreInformation();
+  });
 
   ShowMoreInformation(nationalInterestInformation, e);
 }
 
 function ShowMoreInformation(nationalInterestInformation,e){
-  console.log(nationalInterestInformation);
-  console.log(e);
-
   let informationDiv = document.getElementById("information");
   informationBuilder = "";
   if(nationalInterestInformation.name != false){
@@ -255,7 +261,14 @@ function ShowMoreInformation(nationalInterestInformation,e){
   }
   
   informationDiv.innerHTML = informationBuilder;
+  informationDiv.style.display = 'block';
 }
+
+function HideMoreInformation(){
+  let informationDiv = document.getElementById("information");
+  informationDiv.style.display = 'none';
+}
+
 
 //Gömmer hover-rutan
 function HideHoverInfo() {
