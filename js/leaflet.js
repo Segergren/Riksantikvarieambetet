@@ -1,3 +1,14 @@
+var selectedEnvironmentTypes = document.getElementById('culturalEnvironmentTypes');
+selectedEnvironmentTypes.getElementsByClassName('anchor')[0].onclick = function(evt) {
+  if (selectedEnvironmentTypes.classList.contains('visible'))
+    selectedEnvironmentTypes.classList.remove('visible');
+  else
+    selectedEnvironmentTypes.classList.add('visible');
+}
+
+//const environmentFilterList = ["Dalgångsbygden","Fornlämningsmiljö","Odlingslandskap","Skogsbygden","Fästningsmiljö","Småstadsmiljö","Sommarnöjesmiljö","Skogsbygd ","Fornborg","Industrimiljö","Herrgårdsmiljöer","Skärgårdsmiljö","Gränsbygd","Kommunikationmiljöer","Försvarsmiljöer","Herrgårdslandskap","Slottslandskap","fornlämningsmiljöer","kyrkomiljöer","Brunnsmiljö","Kommunikationsmiljö","Fornlämningsmiljöer","Ensamgård","Gårdsmiljöer","Odlingslandskap","Bruksmiljö","Centralbygd","Stenbrott","Fiskeläge","Fiskelägen","Ensamgårdar","Kommunikationsmiljö","Kyrkomiljöer","Vägmiljö","Fornlämningsmiljö,","Vägmiljö","Fornborgar","Gårdsmiljö","Dalgångsbygd","Kustmiljö","Fiskeläge","Borgmiljö","Bymiljö","Kustsamhälle","Handelsplats","Klostermiljö","Sockencentrum","Fornlämningsmiljö", "Odlingslandskap","Borg- och skansmiljö","Gårdsmiljöerna","Herrgårdsmiljö","Bymiljöradby","Boställsmiljö","Ödekyrkogård","Regementsstad","Radby","Bymiljö,","Sanatoriemiljö","Centralbygden","Militär","Miljö","Koloniträdgårdsområde","Residensstad","Industristad","Kvarnmiljö","Kyrkomiljö","Gruvmiljö","Lågtekniska järnframställningsplatser","Bergsmansbyn","Hyttruin","Kyrkby","Marknadsplats","Stadsmiljö","Järnvägsmiljön","Kyrkoruin","Odlinglandskapet","Farledsmiljö","Förort","Villastad","Kungsgården","Slottsmiljö","Parken","Institutionsmiljö","Industrisamhälle","Bymiljöer","Tidigindustriell miljö","Badorten","Kurort","Villasamhälle","Fullåkersbygd","Brukssamhälle","Tidiga industriella verksamheter","Stadsmiljö av småstadskaraktär","Rekreationsmiljö","Odlingslandskapet","Park","Herrgård","Slättbygd","Kust- och skärgårdsmiljö","Kommunikationsmiljö ","Industrisamhällena","Institutionsmiljöer","Militär miljö","Egnahemsmiljö","Bostadsområde","Förortsmiljö","Begravningsplats","Sjöfarts- och industristad","Fommunikationsmiljö","Skärgårdsbyar","Torp","Herrgårdsmiljön; Sockencentrum","Kommunikationsmiljö (kanalmiljö-farledsmiljö)","Förindustriell centralort","Stadsmiljön","Klungby","Bergslagsmiljö","Bruksort","Tätortsmiljö","Kyrkbybebyggelse","Brunnsmiljöer","Bostadsområden","Stationssamhälle","Bergsmansby","Hyttan","Fornlämningsmiljö med lågtekniska järnframställningsplatser ","Bergsmansgård","Bergsmansgårdar","Berslagsmiljö","Hytta","Hyttområden","Gruvområden","Hyttruiner","Hyttanläggning","Gruvor"];
+const environmentFilterList = [];
+
 var resetStyle = {
   color: "#e6a72e",
   weight: 3,
@@ -347,3 +358,9 @@ municipalityElement.addEventListener('change', (event) => {
 landscapeElement.addEventListener('change', (event) => {
   FlyToLandscape(landscapeElement.value);
 });*/
+
+
+//FILTER
+function culturalEnvironmentFilter(){
+  console.log("FIlter");
+}
