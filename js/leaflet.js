@@ -1,3 +1,12 @@
+var resetStyle = {
+  color: "#e6a72e",
+  weight: 3,
+  opacity: 1.0,
+  fillColor: '#e6a72e',
+  fillOpacity: 0.4
+};
+
+
 function createTriggerOnLoad() {
   GetRiksintresseData();
 }
@@ -32,7 +41,7 @@ function AddBackgroundMap() {
     attribution: 'Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, Imagery &copy; 2013 <a href="http://www.kartena.se/">Kartena</a>'
   }).addTo(map);
   
-  FillMapWithGeojson();
+  FillMapWithNationalInterests();
   //FillMapWithLandscape();
   FillMapWithCounties();
   FillMapWithMunicipality();  
@@ -40,7 +49,6 @@ function AddBackgroundMap() {
 
 //Fyller kartan med geodata från geojson
 function FillMapWithCounties() {
-
   var geoJsonStyle = {
     color: '#0800b3',
     weight: 1,
@@ -57,7 +65,6 @@ function FillMapWithCounties() {
 }
 
 function FillMapWithLandscape() {
-
   var geoJsonStyle = {
     color: '#0800b3',
     weight: 1,
@@ -87,11 +94,10 @@ function FillMapWithMunicipality() {
       style: geoJsonStyle
     }).addTo(map);
   });
-
 }
 
 //Fyller kartan med geodata från geojson
-function FillMapWithGeojson() {
+function FillMapWithNationalInterests() {
   var geoJsonStyle = {
     color: "#e6a72e",
     weight: 3,
@@ -99,10 +105,12 @@ function FillMapWithGeojson() {
     fillColor: '#e6a72e',
     fillOpacity: 0.4
   };
+  let nationalInterests = map.createPane('nationalInterests');
   $.getJSON("https://o11.se/RAA/geojson.geojson", function (data) {
     L.Proj.geoJson(data, {
       onEachFeature: onEachFeatureGeojson,
-      style: geoJsonStyle
+      style: geoJsonStyle,
+      pane: nationalInterests
     }).addTo(map);
   });
   
@@ -111,10 +119,12 @@ function FillMapWithGeojson() {
 //TODO: Funktionen gömmer sig bakom kartan.
 function highlightFeature(e) {
   ShowHoverInfo(e.target.feature.properties.NAMN, e.target.feature.properties.RI_id);
+  setSelectedLayer(e.target);
 }
 
 function resetHighlight(e) {
   HideHoverInfo();
+  resetLayer(e.target);
 }
 
 //Lägger till onhover och onclick-events
@@ -167,46 +177,84 @@ function FindConnectedInformation(e) {
   return selectedInformation;
 }
 
-
 function OnClickEvent(e) {
   let nationalInterestInformation = FindConnectedInformation(e);
   ShowPopUp(nationalInterestInformation, e);
 }
 
+function setSelectedLayer(layer){
+  layer.setStyle({
+    color: '#D94E28',
+    fillColor: '#D94E28'
+  });
+}
+
+function resetLayer(layer){
+  layer.setStyle(
+    resetStyle
+    );
+}
+
+function resetAllLayers(){
+  map.eachLayer(function(layer){
+    if(layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))){
+      console.log(layer);
+      layer.setStyle(
+        resetStyle
+      );
+    }
+  });
+}
+
 //Visar popup när användaren klickar på ett riksintresse
 function ShowPopUp(nationalInterestInformation, e) {
-  let popupInformation = "";
-
-  if (nationalInterestInformation != null && nationalInterestInformation.kulturmiljötyper != false) {
-
-    //Ändrar miljötypen till riksintressets miljötyp
-    if (nationalInterestInformation.kulturmiljötyper.includes(" ") || nationalInterestInformation.kulturmiljötyper.includes(",")) {
-      popupInformation += `<p>Miljötyper: ${nationalInterestInformation.kulturmiljötyper}</p>`;
-    }
-    else {
-      popupInformation += `<p>Miljötyp: ${nationalInterestInformation.kulturmiljötyper}</p>`;
-    }
-  }
-
-  //Om information gällande län finns tillgängligt
-  if (nationalInterestInformation != null && nationalInterestInformation.län != false) {
-    //Ändrar län-texten till riksintressets län
-    popupInformation += `<p>Län: ${nationalInterestInformation.län}</p>`;
-  }
-  //Om information gällande kommun finns tillgängligt
-  if (nationalInterestInformation != null && nationalInterestInformation.kommun != false) {
-    //Ändrar kommun-texten till riksintressets kommun
-    popupInformation += `<p>Kommun: ${nationalInterestInformation.kommun}</p>`;
-  }
-
-
-  let popupHTMLInformation = `<div class='popup'><p class='name'>${nationalInterestInformation.namn}</p>${popupInformation} <p> ID: ${nationalInterestInformation.id}</p></div>`;
+  let popupHTMLInformation = `<div class='popup'><p class='name'>${nationalInterestInformation.name}</p><p>ID: ${nationalInterestInformation.id}</p><a href="#information">Visa mer</a></div>`;
 
   //Lägger till en popup med namn, län, och kommun där användarens muspekare står
   L.popup()
     .setLatLng(e.latlng)
     .setContent(popupHTMLInformation)
     .openOn(map);
+
+  ShowMoreInformation(nationalInterestInformation, e);
+}
+
+function ShowMoreInformation(nationalInterestInformation,e){
+  console.log(nationalInterestInformation);
+  console.log(e);
+
+  let informationDiv = document.getElementById("information");
+  informationBuilder = "";
+  if(nationalInterestInformation.name != false){
+    informationBuilder+=`<h2>${nationalInterestInformation.name}</h2>`;
+  }
+  if(nationalInterestInformation.id != false){
+    informationBuilder+=`<p><b>ID:</b> ${nationalInterestInformation.id}</p>`;
+  }
+  if(nationalInterestInformation.county != false){
+    informationBuilder+=`<p><b>Län:</b> ${nationalInterestInformation.county}</p>`;
+  }
+  if(nationalInterestInformation.municipality != false){
+    informationBuilder+=`<p><b>Kommun:</b> ${nationalInterestInformation.municipality}</p>`;
+  }
+  if(nationalInterestInformation.culturalEnvironmentTypes != false){
+    informationBuilder+=`<p><b>Kulturmiljötyper:</b> ${nationalInterestInformation.culturalEnvironmentTypes}</p>`;
+  }
+  if(nationalInterestInformation.reason != false){
+    informationBuilder+=`<p><b>Motivering:</b> ${nationalInterestInformation.reason}</p>`;
+  }
+  if(nationalInterestInformation.expression != false){
+    informationBuilder+=`<p><b>Uttryck:</b> ${nationalInterestInformation.expression}</p>`;
+  }
+  informationBuilder+=`<p><b>Utredningsområde:</b> ${nationalInterestInformation.underInvestigation ? "Ja":"Nej"}</p>`;
+  if(nationalInterestInformation.firstRevision != false){
+    informationBuilder+=`<p><b>Tidigare revidering:</b> <i>${nationalInterestInformation.firstRevision}</i></p>`;
+  }
+  if(nationalInterestInformation.latestRevision != false){
+    informationBuilder+=`<p><b>Senaste revidering:</b> <i>${nationalInterestInformation.latestRevision}</i></p>`;
+  }
+  
+  informationDiv.innerHTML = informationBuilder;
 }
 
 //Gömmer hover-rutan
@@ -282,7 +330,7 @@ municipalityElement.addEventListener('change', (event) => {
   FlyToMunicipality(municipalityElement.value);
 });
 
-const landscapeElement = document.querySelector('#landscape');
+/*const landscapeElement = document.querySelector('#landscape');
 landscapeElement.addEventListener('change', (event) => {
   FlyToLandscape(landscapeElement.value);
-});
+});*/
