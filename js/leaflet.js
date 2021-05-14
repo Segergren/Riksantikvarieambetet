@@ -137,16 +137,15 @@ function highlightFeature(e) {
 }
 
 function resetHighlight(e) {
-  console.log(e);
   if (currentlyViewingAInterest != e.target && filterLayers.includes(e.target.feature.properties.RI_id) == false) {
     HideHoverInfo();
-    if(filterLayers.length == 0){
+    if (filterLayers.length == 0) {
       resetLayer(e.target);
     }
-    else{
+    else {
       dimLayer(e.target);
     }
-    
+
   }
 }
 
@@ -206,6 +205,16 @@ function OnClickEvent(e) {
   ShowPopUp(nationalInterestInformation, e);
 }
 
+function checkIfInsideCounty(nationalInterest ,county) {
+  let middle = [nationalInterest.getBounds()._southWest.lat + (Math.abs(nationalInterest.getBounds()._northEast.lat - nationalInterest.getBounds()._southWest.lat)), nationalInterest.getBounds()._southWest.lng + (Math.abs(nationalInterest.getBounds()._northEast.lng - nationalInterest.getBounds()._southWest.lng))]
+  if (county._bounds.contains(middle)) {
+    return true;
+  }
+  else{
+    return false;
+  }
+}
+
 function setSelectedLayer(layer) {
   layer.setStyle({
     weight: 3,
@@ -232,7 +241,7 @@ function resetAllLayers() {
   });
 }
 
-function dimLayer(layer){
+function dimLayer(layer) {
   var dimStyle = {
     color: "#e6a72e",
     weight: 3,
@@ -241,14 +250,14 @@ function dimLayer(layer){
     fillOpacity: 0.2
   };
 
-    if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
-      layer.setStyle(
-        dimStyle
-      );
-    }
+  if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
+    layer.setStyle(
+      dimStyle
+    );
+  }
 }
 
-function dimAllLayers(){
+function dimAllLayers() {
   var dimStyle = {
     color: "#e6a72e",
     weight: 3,
@@ -360,6 +369,9 @@ function FlyToCounty(countyID) {
       geojsonElement = layer;
     }
   });
+
+  highlightInterestsInsideCounty(countyID)
+  
   map.flyToBounds(geojsonElement._bounds);
 }
 
@@ -383,6 +395,19 @@ function FlyToLandscape(landscapeID) {
   map.flyToBounds(geojsonElement._bounds);
 }
 
+function highlightInterestsInsideCounty(countyID){
+  dimAllLayers();
+  filterLayers.length = 0;
+  map.eachLayer(function (layer) { 
+    if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
+      if(layer.feature.properties.LANSKOD == countyID){
+        resetLayer(layer);
+        filterLayers.push(layer);
+      }
+    }
+  });
+}
+
 /* // UI EVENTS \\ */
 const searchElement = document.querySelector('#search');
 searchElement.addEventListener('change', (event) => {
@@ -393,6 +418,7 @@ searchElement.addEventListener('change', (event) => {
 const countyElement = document.querySelector('#county');
 countyElement.addEventListener('change', (event) => {
   FlyToCounty(countyElement.value);
+  
 });
 
 const municipalityElement = document.querySelector('#municipality');
@@ -404,7 +430,6 @@ municipalityElement.addEventListener('change', (event) => {
 landscapeElement.addEventListener('change', (event) => {
   FlyToLandscape(landscapeElement.value);
 });*/
-
 
 //FILTER
 function culturalEnvironmentFilter() {
@@ -421,11 +446,11 @@ function culturalEnvironmentFilter() {
 }
 
 function seachByCulturalEnvironments(appliedFilters) {
-  if(appliedFilters.length > 0){
+  if (appliedFilters.length > 0) {
     filterApplied = true;
     dimAllLayers();
   }
-  else{
+  else {
     filterApplied = false;
     resetAllLayers();
   }
