@@ -7,7 +7,6 @@ function GetRiksintresseData() {
 }
 //Lägger in NationalInterest-elementen till nationalInterests-arrayen
 function LoadRiksintresseDataToArray(jsonData) {
-
     jsonData.forEach(element => {
         if (element.hasOwnProperty('RI_ID')) {
             //X
@@ -44,11 +43,16 @@ function LoadRiksintresseDataToArray(jsonData) {
         }
 
     });
+
+    FillFilterList();
+}
+
+function FillFilterList(){
     environmentFilterList.sort();
     let fillFilter = document.getElementsByClassName("items")[0];
     let filterHTMLBuilder = "";
     environmentFilterList.forEach(element => {
-        filterHTMLBuilder += '<li><input type="checkbox" onclick="culturalEnvironmentFilter()"/>' + element + '</li>';
+        filterHTMLBuilder += '<li><input type="checkbox" value="' + element + '" onclick="culturalEnvironmentFilter()"/>' + element + '</li>';
     });
     fillFilter.innerHTML = filterHTMLBuilder;
 }

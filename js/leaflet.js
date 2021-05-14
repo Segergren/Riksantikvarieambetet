@@ -1,5 +1,5 @@
 var selectedEnvironmentTypes = document.getElementById('culturalEnvironmentTypes');
-selectedEnvironmentTypes.getElementsByClassName('anchor')[0].onclick = function(evt) {
+selectedEnvironmentTypes.getElementsByClassName('anchor')[0].onclick = function (evt) {
   if (selectedEnvironmentTypes.classList.contains('visible'))
     selectedEnvironmentTypes.classList.remove('visible');
   else
@@ -18,6 +18,7 @@ var resetStyle = {
 };
 
 let currentlyViewingAInterest = null;
+let filterLayers = [];
 
 function createTriggerOnLoad() {
   GetRiksintresseData();
@@ -52,11 +53,11 @@ function AddBackgroundMap() {
     continuousWorld: true,
     attribution: 'Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, Imagery &copy; 2013 <a href="http://www.kartena.se/">Kartena</a>'
   }).addTo(map);
-  
+
   FillMapWithNationalInterests();
   //FillMapWithLandscape();
   FillMapWithCounties();
-  FillMapWithMunicipality();  
+  FillMapWithMunicipality();
 }
 
 //Fyller kartan med geodata från geojson
@@ -89,15 +90,16 @@ function FillMapWithLandscape() {
     L.Proj.geoJson(data, {
       onEachFeature: onEachFeatureLandscape,
       style: geoJsonStyle
-    }).addTo(map)});
+    }).addTo(map)
+  });
 }
 
 function FillMapWithMunicipality() {
   var geoJsonStyle = {
-    color: '#7f0000',
+    color: '#000000',
     weight: 1,
-    opacity: 0,
-    fillColor: '#7f0000',
+    opacity: 0.05,
+    fillColor: '#000000',
     fillOpacity: 0
   };
   $.getJSON("https://o11.se/RAA/kommun.geojson", function (data) {
@@ -125,7 +127,7 @@ function FillMapWithNationalInterests() {
       pane: nationalInterests
     }).addTo(map);
   });
-  
+
 }
 
 //TODO: Funktionen gömmer sig bakom kartan.
@@ -135,9 +137,16 @@ function highlightFeature(e) {
 }
 
 function resetHighlight(e) {
-  if(currentlyViewingAInterest != e.target){
+  console.log(e);
+  if (currentlyViewingAInterest != e.target && filterLayers.includes(e.target.feature.properties.RI_id) == false) {
     HideHoverInfo();
-    resetLayer(e.target);
+    if(filterLayers.length == 0){
+      resetLayer(e.target);
+    }
+    else{
+      dimLayer(e.target);
+    }
+    
   }
 }
 
@@ -197,24 +206,61 @@ function OnClickEvent(e) {
   ShowPopUp(nationalInterestInformation, e);
 }
 
-function setSelectedLayer(layer){
+function setSelectedLayer(layer) {
   layer.setStyle({
+    weight: 3,
+    opacity: 1.0,
+    fillOpacity: 0.4,
     color: '#D94E28',
     fillColor: '#D94E28'
   });
 }
 
-function resetLayer(layer){
+function resetLayer(layer) {
   layer.setStyle(
     resetStyle
-    );
+  );
 }
 
-function resetAllLayers(){
-  map.eachLayer(function(layer){
-    if(layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))){
+function resetAllLayers() {
+  map.eachLayer(function (layer) {
+    if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
       layer.setStyle(
         resetStyle
+      );
+    }
+  });
+}
+
+function dimLayer(layer){
+  var dimStyle = {
+    color: "#e6a72e",
+    weight: 3,
+    opacity: 0.3,
+    fillColor: '#e6a72e',
+    fillOpacity: 0.2
+  };
+
+    if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
+      layer.setStyle(
+        dimStyle
+      );
+    }
+}
+
+function dimAllLayers(){
+  var dimStyle = {
+    color: "#e6a72e",
+    weight: 3,
+    opacity: 0.3,
+    fillColor: '#e6a72e',
+    fillOpacity: 0.2
+  };
+
+  map.eachLayer(function (layer) {
+    if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
+      layer.setStyle(
+        dimStyle
       );
     }
   });
@@ -230,7 +276,7 @@ function ShowPopUp(nationalInterestInformation, e) {
     .setContent(popupHTMLInformation)
     .openOn(map);
 
-  popup.on('remove', function() {
+  popup.on('remove', function () {
     currentlyViewingAInterest = null;
     resetHighlight(e);
     HideMoreInformation();
@@ -239,43 +285,43 @@ function ShowPopUp(nationalInterestInformation, e) {
   ShowMoreInformation(nationalInterestInformation, e);
 }
 
-function ShowMoreInformation(nationalInterestInformation,e){
+function ShowMoreInformation(nationalInterestInformation, e) {
   let informationDiv = document.getElementById("information");
   informationBuilder = "";
-  if(nationalInterestInformation.name != false){
-    informationBuilder+=`<h2>${nationalInterestInformation.name}</h2>`;
+  if (nationalInterestInformation.name != false) {
+    informationBuilder += `<h2>${nationalInterestInformation.name}</h2>`;
   }
-  if(nationalInterestInformation.id != false){
-    informationBuilder+=`<p><b>ID:</b> ${nationalInterestInformation.id}</p>`;
+  if (nationalInterestInformation.id != false) {
+    informationBuilder += `<p><b>ID:</b> ${nationalInterestInformation.id}</p>`;
   }
-  if(nationalInterestInformation.county != false){
-    informationBuilder+=`<p><b>Län:</b> ${nationalInterestInformation.county}</p>`;
+  if (nationalInterestInformation.county != false) {
+    informationBuilder += `<p><b>Län:</b> ${nationalInterestInformation.county}</p>`;
   }
-  if(nationalInterestInformation.municipality != false){
-    informationBuilder+=`<p><b>Kommun:</b> ${nationalInterestInformation.municipality}</p>`;
+  if (nationalInterestInformation.municipality != false) {
+    informationBuilder += `<p><b>Kommun:</b> ${nationalInterestInformation.municipality}</p>`;
   }
-  if(nationalInterestInformation.culturalEnvironmentTypes != false){
-    informationBuilder+=`<p><b>Kulturmiljötyper:</b> ${nationalInterestInformation.culturalEnvironmentTypes}</p>`;
+  if (nationalInterestInformation.culturalEnvironmentTypes != false) {
+    informationBuilder += `<p><b>Kulturmiljötyper:</b> ${nationalInterestInformation.culturalEnvironmentTypes}</p>`;
   }
-  if(nationalInterestInformation.reason != false){
-    informationBuilder+=`<p><b>Motivering:</b> ${nationalInterestInformation.reason}</p>`;
+  if (nationalInterestInformation.reason != false) {
+    informationBuilder += `<p><b>Motivering:</b> ${nationalInterestInformation.reason}</p>`;
   }
-  if(nationalInterestInformation.expression != false){
-    informationBuilder+=`<p><b>Uttryck:</b> ${nationalInterestInformation.expression}</p>`;
+  if (nationalInterestInformation.expression != false) {
+    informationBuilder += `<p><b>Uttryck:</b> ${nationalInterestInformation.expression}</p>`;
   }
-  informationBuilder+=`<p><b>Utredningsområde:</b> ${nationalInterestInformation.underInvestigation ? "Ja":"Nej"}</p>`;
-  if(nationalInterestInformation.firstRevision != false){
-    informationBuilder+=`<p><b>Tidigare revidering:</b> <i>${nationalInterestInformation.firstRevision}</i></p>`;
+  informationBuilder += `<p><b>Utredningsområde:</b> ${nationalInterestInformation.underInvestigation ? "Ja" : "Nej"}</p>`;
+  if (nationalInterestInformation.firstRevision != false) {
+    informationBuilder += `<p><b>Tidigare revidering:</b> <i>${nationalInterestInformation.firstRevision}</i></p>`;
   }
-  if(nationalInterestInformation.latestRevision != false){
-    informationBuilder+=`<p><b>Senaste revidering:</b> <i>${nationalInterestInformation.latestRevision}</i></p>`;
+  if (nationalInterestInformation.latestRevision != false) {
+    informationBuilder += `<p><b>Senaste revidering:</b> <i>${nationalInterestInformation.latestRevision}</i></p>`;
   }
-  
+
   informationDiv.innerHTML = informationBuilder;
   informationDiv.style.display = 'block';
 }
 
-function HideMoreInformation(){
+function HideMoreInformation() {
   let informationDiv = document.getElementById("information");
   informationDiv.style.display = 'none';
 }
@@ -361,6 +407,47 @@ landscapeElement.addEventListener('change', (event) => {
 
 
 //FILTER
-function culturalEnvironmentFilter(){
-  console.log("FIlter");
+function culturalEnvironmentFilter() {
+  let filterElement = document.getElementsByClassName("items")[0];
+  let filters = filterElement.childNodes;
+  let appliedFilters = [];
+
+  filters.forEach(filter => {
+    if (filter.childNodes[0].checked) {
+      appliedFilters.push(filter.childNodes[0].value);
+    }
+  });
+  seachByCulturalEnvironments(appliedFilters);
+}
+
+function seachByCulturalEnvironments(appliedFilters) {
+  if(appliedFilters.length > 0){
+    filterApplied = true;
+    dimAllLayers();
+  }
+  else{
+    filterApplied = false;
+    resetAllLayers();
+  }
+  filterLayers.length = 0;
+
+  map.eachLayer(function (layer) {
+    if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
+      let informationElement = searchNameAndID(layer.feature.properties.RI_id);
+
+      if (informationElement != null && informationElement.culturalEnvironmentTypes != false) {
+        let layerHasFilter = false;
+        appliedFilters.forEach(filter => {
+          if (informationElement.culturalEnvironmentTypes.includes(filter)) {
+            layerHasFilter = true;
+          }
+        });
+
+        if (layerHasFilter) {
+          setSelectedLayer(layer);
+          filterLayers.push(layer.feature.properties.RI_id);
+        }
+      }
+    }
+  });
 }
