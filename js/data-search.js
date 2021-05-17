@@ -134,6 +134,11 @@ function searchNationalInterests() {
     }
   };
   console.log(filteredNationalInterests);
+  filterLayers.length = 0;
+  filteredNationalInterests.forEach(layer => {
+    filterLayers.push(layer.feature.properties.RI_id);
+  });
+  document.getElementById("showing").innerText = "Vi hittade " + filteredNationalInterests.length + " " + (filteredNationalInterests.length > 1 ? "riksintressen" : "riksintresse") + " som matchade din filtrering.";
   return filteredNationalInterests;
 }
 

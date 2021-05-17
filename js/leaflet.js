@@ -104,7 +104,7 @@ function FillMapWithMunicipality() {
   };
   $.getJSON("https://o11.se/RAA/kommun.geojson", function (data) {
     L.Proj.geoJson(data, {
-      onEachFeature: onEachFeatureMunicipality,
+      //onEachFeature: onEachFeatureMunicipality,
       style: geoJsonStyle
     }).addTo(map);
   });
@@ -158,13 +158,13 @@ function onEachFeatureCounties(feature, layer) {
   LIST_OF_COUNTIES.push(layer);
 }
 
-function onEachFeatureMunicipality(feature, layer) {
+/*function onEachFeatureMunicipality(feature, layer) {
   var opt = document.createElement('option');
   opt.innerHTML = layer.feature.properties.KnNamn;
   opt.value = layer.feature.properties.KnKod;
   municipalityElement.appendChild(opt);
   LIST_OF_MUNICIPALITY.push(layer);
-}
+}*/
 
 //Lägger till onhover och onclick-events
 function onEachFeatureLandscape(feature, layer) {
@@ -277,6 +277,10 @@ function dimAllLayers() {
 
 //Visar popup när användaren klickar på ett riksintresse
 function ShowPopUp(nationalInterestInformation, e) {
+  if(nationalInterestInformation == null){
+    return;
+  }
+
   let popupHTMLInformation = `<div class='popup'><p class='name'>${nationalInterestInformation.name}</p><p>ID: ${nationalInterestInformation.id}</p><a href="#information">Visa mer</a></div>`;
 
   //Lägger till en popup med namn, län, och kommun där användarens muspekare står
@@ -437,10 +441,10 @@ countyElement.addEventListener('change', (event) => {
   }
 });
 
-const municipalityElement = document.querySelector('#municipality');
+/*const municipalityElement = document.querySelector('#municipality');
 municipalityElement.addEventListener('change', (event) => {
   flyToMunicipality(municipalityElement.value);
-});
+});*/
 
 /*const landscapeElement = document.querySelector('#landscape');
 landscapeElement.addEventListener('change', (event) => {
