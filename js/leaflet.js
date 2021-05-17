@@ -458,7 +458,13 @@ function culturalEnvironmentFilter() {
       appliedFilters.push(filter.childNodes[0].value);
     }
   });
-  searchNationalInterests();
+
+  let filteredNationalInterests = searchNationalInterests();
+  dimAllLayers();
+  filteredNationalInterests.forEach(layer => {
+    highlightLayer(layer);
+  });
+  
   //seachByCulturalEnvironments(appliedFilters);
 }
 

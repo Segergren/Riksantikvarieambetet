@@ -38,7 +38,6 @@ function searchNationalInterests() {
   let foundByCultural = [];
 
   //Search by name or id
-  console.log("Inner: " + nameAndIdSearch.value);
   if (nameAndIdSearch.value.length > 0) {
     map.eachLayer(function (layer) {
       if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
@@ -134,7 +133,7 @@ function searchNationalInterests() {
       }
     }
   };
-
+  console.log(filteredNationalInterests);
   return filteredNationalInterests;
 }
 
