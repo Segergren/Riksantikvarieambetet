@@ -133,7 +133,6 @@ function searchNationalInterests() {
       }
     }
   };
-  console.log(filteredNationalInterests);
   filterLayers.length = 0;
   filteredNationalInterests.forEach(layer => {
     filterLayers.push(layer.feature.properties.RI_id);

@@ -4,7 +4,7 @@ class NationalInterest {
         this.id = element.RI_ID;
         this.reason = element.hasOwnProperty('motivering') ? element.motivering : "<i>Ingen information finns tillgänglig</i>";
         this.expression = element.hasOwnProperty('Uttryck_för_RI') ? element.Uttryck_för_RI : "<i>Ingen information finns tillgänglig</i>";
-        this.culturalEnvironmentTypes = element.hasOwnProperty('Kulturmiljötyper kursiverade i text') ? element["Kulturmiljötyper kursiverade i text"] : "<i>Inget information finns tillgänglig</i>";
+        this.culturalEnvironmentTypes = element.hasOwnProperty('Kulturmiljötyper kursiverade i text') ? element["Kulturmiljötyper kursiverade i text"] : "<i>Ingen information finns tillgänglig</i>";
         this.culturalEnvironmentTypesParenthes = element.hasOwnProperty('Kulturmiljötyper inom prantes') ? element["Kulturmiljötyper inom prantes"] : false;
         this.county = element.hasOwnProperty('Län') ? element.Län : false;
         this.municipality = element.hasOwnProperty('Kn') ? element.Kn : false;

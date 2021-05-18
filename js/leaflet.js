@@ -6,8 +6,7 @@ selectedEnvironmentTypes.getElementsByClassName('anchor')[0].onclick = function 
     selectedEnvironmentTypes.classList.add('visible');
 }
 
-//const environmentFilterList = ["Dalgångsbygden","Fornlämningsmiljö","Odlingslandskap","Skogsbygden","Fästningsmiljö","Småstadsmiljö","Sommarnöjesmiljö","Skogsbygd ","Fornborg","Industrimiljö","Herrgårdsmiljöer","Skärgårdsmiljö","Gränsbygd","Kommunikationmiljöer","Försvarsmiljöer","Herrgårdslandskap","Slottslandskap","fornlämningsmiljöer","kyrkomiljöer","Brunnsmiljö","Kommunikationsmiljö","Fornlämningsmiljöer","Ensamgård","Gårdsmiljöer","Odlingslandskap","Bruksmiljö","Centralbygd","Stenbrott","Fiskeläge","Fiskelägen","Ensamgårdar","Kommunikationsmiljö","Kyrkomiljöer","Vägmiljö","Fornlämningsmiljö,","Vägmiljö","Fornborgar","Gårdsmiljö","Dalgångsbygd","Kustmiljö","Fiskeläge","Borgmiljö","Bymiljö","Kustsamhälle","Handelsplats","Klostermiljö","Sockencentrum","Fornlämningsmiljö", "Odlingslandskap","Borg- och skansmiljö","Gårdsmiljöerna","Herrgårdsmiljö","Bymiljöradby","Boställsmiljö","Ödekyrkogård","Regementsstad","Radby","Bymiljö,","Sanatoriemiljö","Centralbygden","Militär","Miljö","Koloniträdgårdsområde","Residensstad","Industristad","Kvarnmiljö","Kyrkomiljö","Gruvmiljö","Lågtekniska järnframställningsplatser","Bergsmansbyn","Hyttruin","Kyrkby","Marknadsplats","Stadsmiljö","Järnvägsmiljön","Kyrkoruin","Odlinglandskapet","Farledsmiljö","Förort","Villastad","Kungsgården","Slottsmiljö","Parken","Institutionsmiljö","Industrisamhälle","Bymiljöer","Tidigindustriell miljö","Badorten","Kurort","Villasamhälle","Fullåkersbygd","Brukssamhälle","Tidiga industriella verksamheter","Stadsmiljö av småstadskaraktär","Rekreationsmiljö","Odlingslandskapet","Park","Herrgård","Slättbygd","Kust- och skärgårdsmiljö","Kommunikationsmiljö ","Industrisamhällena","Institutionsmiljöer","Militär miljö","Egnahemsmiljö","Bostadsområde","Förortsmiljö","Begravningsplats","Sjöfarts- och industristad","Fommunikationsmiljö","Skärgårdsbyar","Torp","Herrgårdsmiljön; Sockencentrum","Kommunikationsmiljö (kanalmiljö-farledsmiljö)","Förindustriell centralort","Stadsmiljön","Klungby","Bergslagsmiljö","Bruksort","Tätortsmiljö","Kyrkbybebyggelse","Brunnsmiljöer","Bostadsområden","Stationssamhälle","Bergsmansby","Hyttan","Fornlämningsmiljö med lågtekniska järnframställningsplatser ","Bergsmansgård","Bergsmansgårdar","Berslagsmiljö","Hytta","Hyttområden","Gruvområden","Hyttruiner","Hyttanläggning","Gruvor"];
-const environmentFilterList = [];
+let environmentFilterList = [];
 
 var resetStyle = {
   color: "#e6a72e",
@@ -21,7 +20,7 @@ let currentlyViewingAInterest = null;
 let filterLayers = [];
 
 function createTriggerOnLoad() {
-  GetRiksintresseData();
+  getRiksintresseData();
 }
 
 //Skapar en ny mapp med EPSG:3006
@@ -145,7 +144,6 @@ function resetHighlight(e) {
     else {
       dimLayer(e.target);
     }
-
   }
 }
 
@@ -427,17 +425,28 @@ searchElement.addEventListener('change', (event) => {
 
 const countyElement = document.querySelector('#county');
 countyElement.addEventListener('change', (event) => {
+  resetFilterList();
   let filteredNationalInterests = searchNationalInterests();
   dimAllLayers();
+  
   filteredNationalInterests.forEach(layer => {
     highlightLayer(layer);
+    //console.log(searchNameAndID(layer.feature.properties.RI_id));
+    loadFilterList(searchNameAndID(layer.feature.properties.RI_id));
   });
 
   if(event.target.value.length > 0){
+    fillFilterList();
     flyToCounty(countyElement.value);
   }
   else{
     resetAllLayers();
+    map.eachLayer(function (layer) { 
+      if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
+        loadFilterList(searchNameAndID(layer.feature.properties.RI_id));
+      }
+    });
+    fillFilterList();
   }
 });
 

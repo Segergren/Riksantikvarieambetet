@@ -1,12 +1,12 @@
 //Hämtar data från json-filen till variabeln jsonData
-function GetRiksintresseData() {
+function getRiksintresseData() {
     $.getJSON('https://o11.se/RAA/data.json', function (data) {
         jsonData = data.data;
-        LoadRiksintresseDataToArray(jsonData);
+        loadRiksintresseDataToArray(jsonData);
     });
 }
 //Lägger in NationalInterest-elementen till nationalInterests-arrayen
-function LoadRiksintresseDataToArray(jsonData) {
+function loadRiksintresseDataToArray(jsonData) {
     jsonData.forEach(element => {
         if (element.hasOwnProperty('RI_ID')) {
             //X
@@ -31,26 +31,41 @@ function LoadRiksintresseDataToArray(jsonData) {
             NATIONAL_INTERESTS.push(new NationalInterest(element));
         }
 
-        if (element.hasOwnProperty("Kulturmiljötyper kursiverade i text")) {
-            let kulturSplit = element["Kulturmiljötyper kursiverade i text"].split(",");
-            kulturSplit.forEach(element => {
-                element = String(element).trim().replace(".", "");
-                element = element.charAt(0).toUpperCase() + element.slice(1);
-                if (!environmentFilterList.includes(element) && element.length > 1) {
-                    environmentFilterList.push(element);
-                }
-            });
-        }
-
+        loadFilterList(element);
     });
-
-    FillFilterList();
+    fillFilterList();
 }
 
-function FillFilterList(){
+function resetFilterList(){
+    environmentFilterList.length = 0;
+    let fillFilter = document.getElementsByClassName("items")[0];
+    fillFilter.innerHTML = "";
+}
+
+function loadFilterList(element){
+    if (element != null && (element.hasOwnProperty("Kulturmiljötyper kursiverade i text") || element.hasOwnProperty("culturalEnvironmentTypes"))) {
+        kulturSplit = "";
+        if(element.hasOwnProperty("Kulturmiljötyper kursiverade i text")){
+            kulturSplit = element["Kulturmiljötyper kursiverade i text"].split(",");
+        }
+        else{
+            kulturSplit = element["culturalEnvironmentTypes"].split(",");
+        }
+        kulturSplit.forEach(element => {
+            element = String(element).trim().replace(".", "");
+            element = element.charAt(0).toUpperCase() + element.slice(1);
+            if (!environmentFilterList.includes(element) && element.length > 1 && !element.includes("Ingen information finns tillgänglig")) {
+                environmentFilterList.push(element);
+            }
+        });
+    }
+}
+
+function fillFilterList(){
     environmentFilterList.sort();
     let fillFilter = document.getElementsByClassName("items")[0];
     let filterHTMLBuilder = "";
+    
     environmentFilterList.forEach(element => {
         filterHTMLBuilder += '<li><input type="checkbox" value="' + element + '" onclick="culturalEnvironmentFilter()"/>' + element + '</li>';
     });
