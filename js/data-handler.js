@@ -37,22 +37,29 @@ function loadRiksintresseDataToArray(jsonData) {
 }
 
 function loadMunicipalityList(){
-    //municipalityFilterList.sort();
-    
+    let countySearch = document.getElementById('county');
+    if(countySearch.value.length == 0){
+        municipalityFilterList.length = 0;
+        municipalityFilterList = [...LIST_OF_MUNICIPALITY];
+    }
+
     municipalityFilterList.sort(function(a, b){
         if(a.feature.properties.KnNamn < b.feature.properties.KnNamn) { return -1; }
         if(a.feature.properties.KnNamn > b.feature.properties.KnNamn) { return 1; }
         return 0;
     })
+    municipalityElement.innerHTML = "";
+    var municipalityListElement = document.createElement('option');
+    municipalityListElement.innerHTML = "Kommun";
+    municipalityListElement.value = "";
+    municipalityElement.appendChild(municipalityListElement);
 
     municipalityFilterList.forEach(municipality => {
-        console.log(municipality.feature.properties);
         var municipalityListElement = document.createElement('option');
         municipalityListElement.innerHTML = municipality.feature.properties.KnNamn;
         municipalityListElement.value = municipality.feature.properties.KnKod;
         municipalityElement.appendChild(municipalityListElement);
     });
-
 }
 
 function resetFilterList(){

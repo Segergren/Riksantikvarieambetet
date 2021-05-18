@@ -111,7 +111,7 @@ function FillMapWithMunicipality() {
     }).addTo(map);
     loadMunicipalityList();
   });
-  
+
 }
 
 //Fyller kartan med geodata från geojson
@@ -162,10 +162,6 @@ function onEachFeatureCounties(feature, layer) {
 }
 
 function onEachFeatureMunicipality(feature, layer) {
-  /*var opt = document.createElement('option');
-  opt.innerHTML = layer.feature.properties.KnNamn;
-  opt.value = layer.feature.properties.KnKod;
-  municipalityElement.appendChild(opt);*/
   LIST_OF_MUNICIPALITY.push(layer);
   municipalityFilterList.push(layer);
 }
@@ -209,12 +205,12 @@ function OnClickEvent(e) {
   ShowPopUp(nationalInterestInformation, e);
 }
 
-function checkIfInsideCounty(nationalInterest ,county) {
+function checkIfInsideCounty(nationalInterest, county) {
   let middle = [nationalInterest.getBounds()._southWest.lat + (Math.abs(nationalInterest.getBounds()._northEast.lat - nationalInterest.getBounds()._southWest.lat)), nationalInterest.getBounds()._southWest.lng + (Math.abs(nationalInterest.getBounds()._northEast.lng - nationalInterest.getBounds()._southWest.lng))]
   if (county._bounds.contains(middle)) {
     return true;
   }
-  else{
+  else {
     return false;
   }
 }
@@ -281,7 +277,7 @@ function dimAllLayers() {
 
 //Visar popup när användaren klickar på ett riksintresse
 function ShowPopUp(nationalInterestInformation, e) {
-  if(nationalInterestInformation == null){
+  if (nationalInterestInformation == null) {
     return;
   }
 
@@ -379,7 +375,7 @@ function flyToCounty(countyID) {
   });
 
   //highlightInterestsInsideCounty(countyID)
-  
+
   map.flyToBounds(geojsonElement._bounds);
 }
 
@@ -403,12 +399,12 @@ function flyToLandscape(landscapeID) {
   map.flyToBounds(geojsonElement._bounds);
 }
 
-function highlightInterestsInsideCounty(countyID){
+function highlightInterestsInsideCounty(countyID) {
   dimAllLayers();
   filterLayers.length = 0;
-  map.eachLayer(function (layer) { 
+  map.eachLayer(function (layer) {
     if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
-      if(layer.feature.properties.LANSKOD == countyID){
+      if (layer.feature.properties.LANSKOD == countyID) {
         resetLayer(layer);
         filterLayers.push(layer);
       }
@@ -431,57 +427,63 @@ searchElement.addEventListener('change', (event) => {
 
 const countyElement = document.querySelector('#county');
 countyElement.addEventListener('change', (event) => {
-  resetFilterList();
-  let filteredNationalInterests = searchNationalInterests();
-  dimAllLayers();
-  
-  filteredNationalInterests.forEach(layer => {
-    highlightLayer(layer);
-    //console.log(searchNameAndID(layer.feature.properties.RI_id));
-    loadFilterList(searchNameAndID(layer.feature.properties.RI_id));
-  });
 
-  if(event.target.value.length > 0){
-    fillFilterList();
-    flyToCounty(countyElement.value);
-  }
-  else{
-    resetAllLayers();
-    map.eachLayer(function (layer) { 
-      if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
-        loadFilterList(searchNameAndID(layer.feature.properties.RI_id));
-      }
-    });
-    fillFilterList();
-  }
+  municipalityFilterList.length = 0;
+  LIST_OF_MUNICIPALITY.forEach(municipality => {
+    if (String(municipality.feature.properties.KnKod).substring(0, 2) == String(countyElement.value)) {
+      municipalityFilterList.push(municipality);
+    }
+  });
+  loadMunicipalityList();
+  searchWithHighlight(event, "county");
 });
 
 const municipalityElement = document.querySelector('#municipality');
 municipalityElement.addEventListener('change', (event) => {
+  searchWithHighlight(event, "municipality");
+});
+
+function searchWithHighlight(event, flyTo) {
   resetFilterList();
   let filteredNationalInterests = searchNationalInterests();
   dimAllLayers();
-  
+
   filteredNationalInterests.forEach(layer => {
     highlightLayer(layer);
-    //console.log(searchNameAndID(layer.feature.properties.RI_id));
     loadFilterList(searchNameAndID(layer.feature.properties.RI_id));
   });
 
-  if(event.target.value.length > 0){
-    fillFilterList();
-    flyToMunicipality(municipalityElement.value);
+  if (flyTo == "municipality") {
+    if (municipalityElement.value.length > 0) {     
+      flyToMunicipality(municipalityElement.value);
+    }
+    else {
+      if (countyElement.value.length > 0) {
+        flyToCounty(countyElement.value);
+      }
+      else {
+
+      }
+    }
+  } else if (flyTo == "county") {
+    if(countyElement.value.length > 0){
+      flyToCounty(countyElement.value);
+    }
   }
-  else{
+  fillFilterList();
+
+  if (municipalityElement.value.length == 0 && countyElement.value.length == 0) {
     resetAllLayers();
-    map.eachLayer(function (layer) { 
+    map.eachLayer(function (layer) {
       if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
         loadFilterList(searchNameAndID(layer.feature.properties.RI_id));
       }
     });
     fillFilterList();
+    searchNationalInterests();
   }
-});
+}
+
 
 /*const landscapeElement = document.querySelector('#landscape');
 landscapeElement.addEventListener('change', (event) => {
@@ -505,7 +507,7 @@ function culturalEnvironmentFilter() {
   filteredNationalInterests.forEach(layer => {
     highlightLayer(layer);
   });
-  
+
   //seachByCulturalEnvironments(appliedFilters);
 }
 
