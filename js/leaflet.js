@@ -7,6 +7,7 @@ selectedEnvironmentTypes.getElementsByClassName('anchor')[0].onclick = function 
 }
 
 let environmentFilterList = [];
+let municipalityFilterList = [];
 
 var resetStyle = {
   color: "#e6a72e",
@@ -74,6 +75,8 @@ function FillMapWithCounties() {
       style: geoJsonStyle
     }).addTo(map);
   });
+
+
 }
 
 function FillMapWithLandscape() {
@@ -103,10 +106,12 @@ function FillMapWithMunicipality() {
   };
   $.getJSON("https://o11.se/RAA/kommun.geojson", function (data) {
     L.Proj.geoJson(data, {
-      //onEachFeature: onEachFeatureMunicipality,
+      onEachFeature: onEachFeatureMunicipality,
       style: geoJsonStyle
     }).addTo(map);
+    loadMunicipalityList();
   });
+  
 }
 
 //Fyller kartan med geodata från geojson
@@ -156,13 +161,14 @@ function onEachFeatureCounties(feature, layer) {
   LIST_OF_COUNTIES.push(layer);
 }
 
-/*function onEachFeatureMunicipality(feature, layer) {
-  var opt = document.createElement('option');
+function onEachFeatureMunicipality(feature, layer) {
+  /*var opt = document.createElement('option');
   opt.innerHTML = layer.feature.properties.KnNamn;
   opt.value = layer.feature.properties.KnKod;
-  municipalityElement.appendChild(opt);
+  municipalityElement.appendChild(opt);*/
   LIST_OF_MUNICIPALITY.push(layer);
-}*/
+  municipalityFilterList.push(layer);
+}
 
 //Lägger till onhover och onclick-events
 function onEachFeatureLandscape(feature, layer) {
@@ -450,10 +456,32 @@ countyElement.addEventListener('change', (event) => {
   }
 });
 
-/*const municipalityElement = document.querySelector('#municipality');
+const municipalityElement = document.querySelector('#municipality');
 municipalityElement.addEventListener('change', (event) => {
-  flyToMunicipality(municipalityElement.value);
-});*/
+  resetFilterList();
+  let filteredNationalInterests = searchNationalInterests();
+  dimAllLayers();
+  
+  filteredNationalInterests.forEach(layer => {
+    highlightLayer(layer);
+    //console.log(searchNameAndID(layer.feature.properties.RI_id));
+    loadFilterList(searchNameAndID(layer.feature.properties.RI_id));
+  });
+
+  if(event.target.value.length > 0){
+    fillFilterList();
+    flyToMunicipality(municipalityElement.value);
+  }
+  else{
+    resetAllLayers();
+    map.eachLayer(function (layer) { 
+      if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
+        loadFilterList(searchNameAndID(layer.feature.properties.RI_id));
+      }
+    });
+    fillFilterList();
+  }
+});
 
 /*const landscapeElement = document.querySelector('#landscape');
 landscapeElement.addEventListener('change', (event) => {

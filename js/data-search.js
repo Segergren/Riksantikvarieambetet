@@ -31,10 +31,12 @@ function searchNameAndID(searchParameter) {
 function searchNationalInterests() {
   let nameAndIdSearch = document.getElementById('search');
   let countySearch = document.getElementById('county');
+  let municipalitySearch = document.getElementById('municipality');
   let culturalEnvironmentTypeSearch = document.getElementsByClassName("items")[0];
 
   let foundByNameOrID = [];
   let foundByCounty = [];
+  let foundByMunicipality = [];
   let foundByCultural = [];
 
   //Search by name or id
@@ -53,6 +55,19 @@ function searchNationalInterests() {
       }
     });
   }
+
+//Search by municipality
+console.log(municipalitySearch.value);
+if (municipalitySearch.value.length > 0) {
+  map.eachLayer(function (layer) {
+    if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
+      let informationElement = searchNameAndID(layer.feature.properties.RI_id);
+      if (informationElement != null && (String(informationElement.municipality) == String(municipalitySearch.innerText))) {
+        foundByMunicipality.push(layer);
+      }
+    }
+  });
+}
 
   //Search by county
   if (countySearch.value.length > 0) {
@@ -100,7 +115,7 @@ function searchNationalInterests() {
   let filteredNationalInterests = [];
 
   //Check if national interest includes all filters
-  filteredNationalInterests = filteredNationalInterests.concat(foundByNameOrID, foundByCounty, foundByCultural);
+  filteredNationalInterests = filteredNationalInterests.concat(foundByNameOrID, foundByMunicipality, foundByCounty, foundByCultural);
 
   //Ta bort dubletter
   filteredNationalInterests = filteredNationalInterests.reduce(function (a, b) { if (a.indexOf(b) < 0) a.push(b); return a; }, []);
@@ -117,9 +132,17 @@ function searchNationalInterests() {
       }
     }
 
-    //Om namn/id filter är på
+    //Om län-filter är på
     if (countySearch.value.length > 0) {
       let found = foundByCounty.includes(filteredNationalInterests[i]);
+      if (found == false) {
+        filteredNationalInterests.splice(i, 1);
+      }
+    }
+
+    //Om kommun-filter är på
+    if (municipalitySearch.value.length > 0) {
+      let found = foundByMunicipality.includes(filteredNationalInterests[i]);
       if (found == false) {
         filteredNationalInterests.splice(i, 1);
       }

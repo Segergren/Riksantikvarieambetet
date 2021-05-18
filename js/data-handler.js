@@ -36,6 +36,25 @@ function loadRiksintresseDataToArray(jsonData) {
     fillFilterList();
 }
 
+function loadMunicipalityList(){
+    //municipalityFilterList.sort();
+    
+    municipalityFilterList.sort(function(a, b){
+        if(a.feature.properties.KnNamn < b.feature.properties.KnNamn) { return -1; }
+        if(a.feature.properties.KnNamn > b.feature.properties.KnNamn) { return 1; }
+        return 0;
+    })
+
+    municipalityFilterList.forEach(municipality => {
+        console.log(municipality.feature.properties);
+        var municipalityListElement = document.createElement('option');
+        municipalityListElement.innerHTML = municipality.feature.properties.KnNamn;
+        municipalityListElement.value = municipality.feature.properties.KnKod;
+        municipalityElement.appendChild(municipalityListElement);
+    });
+
+}
+
 function resetFilterList(){
     environmentFilterList.length = 0;
     let fillFilter = document.getElementsByClassName("items")[0];
