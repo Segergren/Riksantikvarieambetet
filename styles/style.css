@@ -1,6 +1,28 @@
+html, body {
+  height: 96.7%;
+}
 body{
   margin: 0;
 }
+
+.header{
+  height: 5%;
+  margin-bottom: 20px;
+  
+}
+.header img{
+  margin: 10px;
+  max-width:100%;
+  max-height:100%;
+  object-fit: contain;
+}
+
+.divider{
+  width: 100%;
+  height: 2px;
+  background-color: gray;
+}
+
 .popup p{
   margin-top: 0 !important;
   margin-bottom: 0 !important;
@@ -11,9 +33,9 @@ body{
 
 #mapid{
     margin:0;
-    float: right;
-    max-width: 73%; 
-    min-height: 50em !important;
+    float:right;
+    min-height: 100%;
+    /*max-width: 170em; */
 }
 
 .map-overlay {
@@ -38,11 +60,14 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
 
 /* SIDEPANEL */
 .sidepanel{
+  float:left;
   margin:0;
-  float: left;
-  max-width: 20em;
-  min-height: 37.5em;
-  background-color: gray;
+  max-width: 31em;
+  min-height: 100%;
+  background-color: white;
+  border-right: solid;
+  border-width: 1px;
+  border-right-color: gray;
   overflow: hidden;
 }
 
@@ -53,10 +78,16 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
 }
 .sidepanel .selection input{
   float: left;
-  min-width: 90%;
+  min-width: 89.2%;
   padding: 6px;
   font-size: 17px;
-  border: none;
+  border: solid #444;
+  background-color: white;
+  border-radius: 2px;
+}
+
+.sidepanel .selection input:hover{
+  border-color: #D94E28;
 }
 
 .sidepanel select{
@@ -64,7 +95,13 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
   width: 93%;
   padding: 6px;
   font-size: 17px;
-  border: none;
+  border: solid #444;
+  background-color: white;
+  border-radius: 2px;
+}
+
+.sidepanel select:hover{
+  border-color: #D94E28;
 }
 
 #information{
@@ -83,6 +120,7 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
   font-family:'Segoe UI', Arial, Helvetica, sans-serif;
   font-size: 17px;
   max-width: 100%;
+  min-width: 96%;
   border-radius: 3px;
 }
 
@@ -90,17 +128,22 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
   max-height: 20em;
   overflow-y: scroll;
   overflow-x: hidden;
-  max-width: 98%;
+  max-width: 97%;
 }
 
 .dropdown-check-list .anchor {
   position: relative;
   cursor: pointer;
   display: inline-block;
-  min-width: 13.8em;
+  min-width: 83%;
   padding: 5px 50px 5px 10px;
-  border: 1px solid #ccc;
+  border: solid #444;
   background-color: white;
+  border-radius: 2px;
+}
+
+.dropdown-check-list .anchor:hover{
+  border-color: #D94E28;
 }
 
 .dropdown-check-list .anchor:after {
@@ -146,4 +189,68 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
 
 #showing{
   float: right;
+}
+
+#result-table{
+  max-height: 80%;
+}
+
+/* Style the button that is used to open and close the collapsible content */
+.collapsible {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 93%;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  margin: 0.5em;
+  margin-bottom: 0;
+  border: solid;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.collapsible:hover {
+  background-color: #ccc;
+  border-color: #D94E28;
+}
+
+.active {
+  background-color: #ccc;
+  border-color: #D94E28;
+  border-bottom: 0;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
+
+/* Style the collapsible content. Note: hidden by default */
+.content {
+  border-radius: 0px 0px 2px 2px;
+  padding: 0 18px;
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  width: 84.5%;
+  margin: 0.5em;
+  margin-top: 0;
+  transition: max-height 0.2s ease-out;
+  border: solid;
+  border-color: #D94E28;
+  border-top: none;
+  visibility: hidden;
+}
+
+.collapsible:after {
+  border-radius: 2px 2px 0px 0px;
+  content: '\02795'; /* Unicode character for "plus" sign (+) */
+  font-size: 13px;
+  color: white;
+  float: right;
+  margin-left: 5px;
+}
+
+.active:after {
+  content: "\2796"; /* Unicode character for "minus" sign (-) */
 }

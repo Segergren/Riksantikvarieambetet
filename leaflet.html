@@ -19,35 +19,84 @@
 </head>
 
 <body>
+  <div class="header">
+    <img src="https://o11.se/RAA/rikssök.png">
+  </div>
+  <div class="divider"></div>
 
-  <div class="sidepanel">
-    <div class="selection"><input type="text" placeholder="Sök" id="search"></div>
-    <div class="selection">
-      <select class="county" id="county" name="county">
-        <option value="" selected>Län</option>
-      </select>
-    </div>
-    <div class="selection">
-      <select class="municipality" id="municipality" name="municipality">
-        <option value="" selected>Kommun</option>
-      </select>
-    </div>
+    <div class="sidepanel">
+      <div class="selection"><input type="text" placeholder="Sök" id="search"></div>
+      <div class="selection">
+        <select class="county" id="county" name="county">
+          <option value="" selected>Län</option>
+        </select>
+      </div>
+      <div class="selection">
+        <select class="municipality" id="municipality" name="municipality">
+          <option value="" selected>Kommun</option>
+        </select>
+      </div>
 
-    <div id="culturalEnvironmentTypes" class="dropdown-check-list" tabindex="100">
-      <span class="anchor">Kulturmiljötyper</span>
-      <div class="itemsContainer">
-        <ul class="items">
-        </ul>
+      <div id="culturalEnvironmentTypes" class="dropdown-check-list" tabindex="100">
+        <span class="anchor">Kulturmiljötyper</span>
+        <div class="itemsContainer">
+          <ul class="items">
+          </ul>
+        </div>
+      </div>
+
+      <div id="result-table">
+        <button type="button" class="collapsible">Vira bruk</button>
+        <div class="content">
+          <p>ID: AB63</p>
+          <p>Län: Stockholm</p>
+          <p>Kommun: Österåker</p>
+          <p>Kulturmiljötyper: Herrgårdslandskap, Sockencentrum</p>
+          <p>Motivering: Ingen information finns tillgänglig</p>
+          <p>Uttryck: Östanå herrgård som dominerar bygden, och den mindre och enklare Mälby herrgård, med
+            huvudbyggnader i nyklassicism respektive karolinsk stil. Barockträdgården vid Östanå, som sträcker sig ner
+            mot Saltsjön. Ekonomibyggnader, Östanå såg med arbetarbostäder och andra byggnader och anläggningar som
+            visar på verksamheten vid herrgårdarna. Alléer, gamla vägsträckningar och det av godsdriften präglade
+            kulturlandskapet. Roslags-Kulla kyrka i en arkitekturstil som hör hemma i Finland, med f.d.
+            komministerbostad och två äldre skolhus.</p>
+          <p>Utredningsområde: Nej</p>
+          <p>Tidigare revidering: 8/18/97</p>
+        </div>
+        <button type="button" class="collapsible">Vira bruk</button>
+        <div class="content">
+          <p>ID: AB63</p>
+          <p>Län: Stockholm</p>
+          <p>Kommun: Österåker</p>
+          <p>Kulturmiljötyper: Herrgårdslandskap, Sockencentrum</p>
+          <p>Motivering: Ingen information finns tillgänglig</p>
+          <p>Uttryck: Östanå herrgård som dominerar bygden, och den mindre och enklare Mälby herrgård, med
+            huvudbyggnader i nyklassicism respektive karolinsk stil. Barockträdgården vid Östanå, som sträcker sig ner
+            mot Saltsjön. Ekonomibyggnader, Östanå såg med arbetarbostäder och andra byggnader och anläggningar som
+            visar på verksamheten vid herrgårdarna. Alléer, gamla vägsträckningar och det av godsdriften präglade
+            kulturlandskapet. Roslags-Kulla kyrka i en arkitekturstil som hör hemma i Finland, med f.d.
+            komministerbostad och två äldre skolhus.</p>
+          <p>Utredningsområde: Nej</p>
+          <p>Tidigare revidering: 8/18/97</p>
+        </div>
+        <button type="button" class="collapsible">Vira bruk</button>
+        <div class="content">
+          <p>ID: AB63</p>
+          <p>Län: Stockholm</p>
+          <p>Kommun: Österåker</p>
+          <p>Kulturmiljötyper: Herrgårdslandskap, Sockencentrum</p>
+          <p>Motivering: Ingen information finns tillgänglig</p>
+          <p>Uttryck: Östanå herrgård som dominerar bygden, och den mindre och enklare Mälby herrgård, med
+            huvudbyggnader i nyklassicism respektive karolinsk stil. Barockträdgården vid Östanå, som sträcker sig ner
+            mot Saltsjön. Ekonomibyggnader, Östanå såg med arbetarbostäder och andra byggnader och anläggningar som
+            visar på verksamheten vid herrgårdarna. Alléer, gamla vägsträckningar och det av godsdriften präglade
+            kulturlandskapet. Roslags-Kulla kyrka i en arkitekturstil som hör hemma i Finland, med f.d.
+            komministerbostad och två äldre skolhus.</p>
+          <p>Utredningsområde: Nej</p>
+          <p>Tidigare revidering: 8/18/97</p>
+        </div>
       </div>
     </div>
-
-    <!--<div class="selection">
-      <select class="landscape" id="landscape" name="landscape">
-        <option value="" selected>Landskap</option>
-      </select>
-    </div>-->
-  </div>
-  <div id="mapid" style="width: 100%; height: 600px; position: relative;"></div>
+    <div id="mapid" style="width: 100%; height: 600px; position: relative;"></div>
   <script src="https://cdn.jsdelivr.net/npm/@turf/turf@5/turf.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
   <script src="https://o11.se/RAA/proj4.js"></script>

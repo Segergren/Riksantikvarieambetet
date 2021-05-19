@@ -54,6 +54,7 @@ function AddBackgroundMap() {
     attribution: 'Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, Imagery &copy; 2013 <a href="http://www.kartena.se/">Kartena</a>'
   }).addTo(map);
 
+
   FillMapWithNationalInterests();
   //FillMapWithLandscape();
   FillMapWithCounties();
@@ -541,4 +542,22 @@ function seachByCulturalEnvironments(appliedFilters) {
       }
     }
   });
+}
+
+
+
+
+$(document).ready(function() {
+  redraw();
+});
+
+$(window).resize(function() {
+  redraw();
+});
+
+function redraw()
+{
+    var full_width = $('body').width();
+    var left_width = $('.sidepanel').width();
+    $('#mapid').width(full_width - left_width -1);
 }
