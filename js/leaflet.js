@@ -296,7 +296,55 @@ function ShowPopUp(nationalInterestInformation, e) {
     hideMoreInformation();
   });
 
-  ShowMoreInformation(nationalInterestInformation, e);
+  addInterestToResultTable(nationalInterestInformation, e, true);
+  //ShowMoreInformation(nationalInterestInformation, e);
+}
+
+function addInterestToResultTable(nationalInterestInformation, e, open) {
+  let resultTable = document.getElementById("result-table");
+  console.log(nationalInterestInformation);
+  let htmlResult = `
+  <button type="button" class="collapsible">${nationalInterestInformation.name}</button>
+      <div class="content">
+        <p class="title"><b>ID</b></p>
+        <p>${nationalInterestInformation.id}</p>
+        <p class="title"><b>Län</b></p>
+        <p>${nationalInterestInformation.county}</p>
+        <p class="title"><b>Kommun</b></p>
+        <p>${nationalInterestInformation.municipality}</p>`;
+
+        if(nationalInterestInformation.culturalEnvironmentTypes != false){
+          htmlResult+= `<p class="title"><b>Kulturmiljötyper</b></p>
+                        <p>${nationalInterestInformation.culturalEnvironmentTypes}</p>`;        
+        }
+        if(nationalInterestInformation.reason != false){
+          htmlResult+= `<p class="title"><b>Motivering</b></p>
+                        <p>${nationalInterestInformation.reason}</p>`
+        }
+        if(nationalInterestInformation.expression != false){
+          htmlResult += `<p class="title"><b>Uttryck</b></p>
+                         <p>${nationalInterestInformation.expression}</p>`
+        }
+        if(nationalInterestInformation.underInvestigation != false){
+          htmlResult += `<p class="title"><b>Utredningsområde</b></p>
+                         <p>${nationalInterestInformation.underInvestigation}</p>`
+        }
+        if(nationalInterestInformation.firstRevision != false){
+          htmlResult += `<p class="title"><b>Tidigare revidering</b></p>
+                        <p>${nationalInterestInformation.firstRevision}</p>`;
+        }
+        if(nationalInterestInformation.latestRevision != false){
+          htmlResult += `<p class="title"><b>Senaste revidering</b></p>
+                         <p>${nationalInterestInformation.latestRevision}</p>`;
+        }
+        htmlResult+= '</div>';
+  //resultTable.innerHTML += htmlResult;
+
+  let div = document.createElement('div');
+  div.innerHTML = htmlResult;
+  resultTable.append(div);
+  addResultAnimation();
+  openResult();
 }
 
 function ShowMoreInformation(nationalInterestInformation, e) {
@@ -455,7 +503,7 @@ function searchWithHighlight(event, flyTo) {
   });
 
   if (flyTo == "municipality") {
-    if (municipalityElement.value.length > 0) {     
+    if (municipalityElement.value.length > 0) {
       flyToMunicipality(municipalityElement.value);
     }
     else {
@@ -467,7 +515,7 @@ function searchWithHighlight(event, flyTo) {
       }
     }
   } else if (flyTo == "county") {
-    if(countyElement.value.length > 0){
+    if (countyElement.value.length > 0) {
       flyToCounty(countyElement.value);
     }
   }
@@ -544,20 +592,26 @@ function seachByCulturalEnvironments(appliedFilters) {
   });
 }
 
-
-
-
-$(document).ready(function() {
+$(document).ready(function () {
   redraw();
 });
 
-$(window).resize(function() {
+$(window).resize(function () {
   redraw();
 });
 
-function redraw()
-{
-    var full_width = $('body').width();
-    var left_width = $('.sidepanel').width();
-    $('#mapid').width(full_width - left_width -1);
+let documentHeight = 0;
+window.setInterval(function () {
+  if (documentHeight != $('.sidepanel').height()) {
+    documentHeight = $('.sidepanel').height();
+  }
+  redraw();
+}, 100);
+
+function redraw() {
+  var full_width = $('body').width();
+  var left_width = $('.sidepanel').width();
+  var left_height = $('.sidepanel').height();
+  $('#mapid').width(full_width - left_width - 1);
+  $("#mapid").height(left_height);
 }

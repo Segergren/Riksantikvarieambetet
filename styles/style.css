@@ -15,6 +15,14 @@ body{
   max-width:100%;
   max-height:100%;
   object-fit: contain;
+  overflow: hidden;
+}
+
+.header p{
+  height: 5%;
+  padding:14px;
+  font-size: 18px;
+  float: right;
 }
 
 .divider{
@@ -151,19 +159,14 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
   content: "";
   border-left: 2px solid black;
   border-top: 2px solid black;
-  padding: 5px;
-  right: 10px;
-  top: 20%;
+  padding: 2px;
+  right: 5px;
+  top: 40%;
   -moz-transform: rotate(-135deg);
   -ms-transform: rotate(-135deg);
   -o-transform: rotate(-135deg);
   -webkit-transform: rotate(-135deg);
   transform: rotate(-135deg);
-}
-
-.dropdown-check-list .anchor:active:after {
-  right: 8px;
-  top: 21%;
 }
 
 .dropdown-check-list ul.items {
@@ -185,10 +188,6 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
 
 .dropdown-check-list.visible .items {
   display: block;
-}
-
-#showing{
-  float: right;
 }
 
 #result-table{
@@ -229,6 +228,7 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
 .content {
   border-radius: 0px 0px 2px 2px;
   padding: 0 18px;
+  padding-bottom: 6px;
   background-color: white;
   max-height: 0;
   overflow: hidden;
@@ -241,6 +241,17 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
   border-top: none;
   visibility: hidden;
 }
+
+.content p{
+  margin:0;
+  padding: 0;
+}
+
+.content .title{
+  font-size: 1em;
+  margin-top: 10px;
+}
+
 
 .collapsible:after {
   border-radius: 2px 2px 0px 0px;

@@ -123,7 +123,6 @@ if (municipalitySearch.value.length > 0 && municipalitySearch.options[municipali
 
     //Om namn/id filter är på
     if (nameAndIdSearch.value.length > 0) {
-      console.log("a");
       let found = foundByNameOrID.includes(filteredNationalInterests[i]);
       if (found == false) {
         filteredNationalInterests.splice(i, 1);
@@ -132,7 +131,6 @@ if (municipalitySearch.value.length > 0 && municipalitySearch.options[municipali
 
     //Om län-filter är på
     if (countySearch.value.length > 0) {
-      console.log("b");
       let found = foundByCounty.includes(filteredNationalInterests[i]);
       if (found == false) {
         filteredNationalInterests.splice(i, 1);
@@ -141,7 +139,6 @@ if (municipalitySearch.value.length > 0 && municipalitySearch.options[municipali
 
     //Om kommun-filter är på
     if (municipalitySearch.value.length > 0) {
-      console.log("c");
       let found = foundByMunicipality.includes(filteredNationalInterests[i]);
       if (found == false) {
         filteredNationalInterests.splice(i, 1);
@@ -150,7 +147,6 @@ if (municipalitySearch.value.length > 0 && municipalitySearch.options[municipali
 
     //Om kulturmiljö-filter är på
     if (appliedFilters.length > 0) {
-      console.log("d");
       let found = foundByCultural.includes(filteredNationalInterests[i]);
       if (found == false) {
         filteredNationalInterests.splice(i, 1);
@@ -166,7 +162,6 @@ if (municipalitySearch.value.length > 0 && municipalitySearch.options[municipali
   console.log(filteredNationalInterests);
   return filteredNationalInterests;
 }
-
 
 function showSearchedInput(element) {
   let information = document.getElementById('information');
