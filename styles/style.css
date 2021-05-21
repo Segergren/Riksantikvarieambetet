@@ -20,7 +20,7 @@ body{
 
 .header p{
   height: 5%;
-  padding:14px;
+  padding: 0.25em;
   font-size: 18px;
   float: right;
 }
@@ -211,6 +211,11 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
 
 /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
 .collapsible:hover {
+  background-color: #ccc;
+  border-color: #D94E28;
+}
+
+.highlight{
   background-color: #ccc;
   border-color: #D94E28;
 }

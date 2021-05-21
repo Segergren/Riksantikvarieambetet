@@ -59,6 +59,38 @@ function AddBackgroundMap() {
   //FillMapWithLandscape();
   FillMapWithCounties();
   FillMapWithMunicipality();
+  map.on('zoomend', function () {
+    updateResultTableOnMove();
+  });
+  map.on('dragend', function () {
+    updateResultTableOnMove();
+  });
+}
+
+function updateResultTableOnMove() {
+  let layersInsideZoomRange = getFeaturesInView();
+  clearResultTable();
+  let inserted = 0;
+  let filteredFeatures = [];
+  searchNationalInterests().forEach(layer => {
+    filteredFeatures.push(layer.feature);
+  });
+
+  layersInsideZoomRange.forEach(layer => {
+    let nationalInterestInformation = FindConnectedInformation(layer);
+    if (nationalInterestInformation != null && inserted < 3) {
+      if (filteredFeatures.length > 0) {
+        if (filteredFeatures.includes(layer)) {
+          inserted++;
+          addInterestToResultTable(nationalInterestInformation, layer, true);
+        }
+      }
+      else {
+        inserted++;
+        addInterestToResultTable(nationalInterestInformation, layer, true);
+      }
+    }
+  });
 }
 
 //Fyller kartan med geodata från geojson
@@ -112,7 +144,6 @@ function FillMapWithMunicipality() {
     }).addTo(map);
     loadMunicipalityList();
   });
-
 }
 
 //Fyller kartan med geodata från geojson
@@ -135,13 +166,13 @@ function FillMapWithNationalInterests() {
 
 }
 
-//TODO: Funktionen gömmer sig bakom kartan.
 function highlightFeature(e) {
-  //ShowHoverInfo(e.target.feature.properties.NAMN, e.target.feature.properties.RI_id);
+  highlightResultTable(e.target);
   highlightLayer(e.target);
 }
 
 function resetHighlight(e) {
+  resetHighlightResultTable();
   if (currentlyViewingAInterest != e.target && filterLayers.includes(e.target.feature.properties.RI_id) == false) {
     hideHoverInfo();
     if (filterLayers.length == 0) {
@@ -192,11 +223,20 @@ function onEachFeatureGeojson(feature, layer) {
 //Hittar informationen kopplat till en geodata
 function FindConnectedInformation(e) {
   let selectedInformation;
-  NATIONAL_INTERESTS.forEach(element => {
-    if (String(e.target.feature.properties.RI_id) == String(element.id)) {
-      selectedInformation = element;
-    }
-  });
+  if (e.target != null) {
+    NATIONAL_INTERESTS.forEach(element => {
+      if (String(e.target.feature.properties.RI_id) == String(element.id)) {
+        selectedInformation = element;
+      }
+    });
+  }
+  else {
+    NATIONAL_INTERESTS.forEach(element => {
+      if (String(e.properties.RI_id) == String(element.id)) {
+        selectedInformation = element;
+      }
+    });
+  }
   return selectedInformation;
 }
 
@@ -213,6 +253,26 @@ function checkIfInsideCounty(nationalInterest, county) {
   }
   else {
     return false;
+  }
+}
+
+function resetHighlightResultTable() {
+  var coll = document.getElementsByClassName("collapsible");
+  var i;
+  for (i = 0; i < coll.length; i++) {
+    coll[i].classList.remove("highlight");
+  }
+}
+
+function highlightResultTable(layer) {
+  console.log(layer.feature.properties.RI_id);
+  resetHighlightResultTable();
+  var coll = document.getElementsByClassName("collapsible");
+  var i;
+  for (i = 0; i < coll.length; i++) {
+    if (coll[i].value == layer.feature.properties.RI_id) {
+      coll[i].classList.add("highlight");
+    }
   }
 }
 
@@ -295,92 +355,56 @@ function ShowPopUp(nationalInterestInformation, e) {
     resetHighlight(e);
     hideMoreInformation();
   });
+}
 
-  addInterestToResultTable(nationalInterestInformation, e, true);
-  //ShowMoreInformation(nationalInterestInformation, e);
+function clearResultTable() {
+  let resultTable = document.getElementById("result-table");
+  resultTable.innerHTML = "";
 }
 
 function addInterestToResultTable(nationalInterestInformation, e, open) {
   let resultTable = document.getElementById("result-table");
-  console.log(nationalInterestInformation);
   let htmlResult = `
-  <button type="button" class="collapsible">${nationalInterestInformation.name}</button>
+  <button type="button" value="${nationalInterestInformation.id}" class="collapsible">${nationalInterestInformation.name}</button>
       <div class="content">
         <p class="title"><b>ID</b></p>
-        <p>${nationalInterestInformation.id}</p>
+        <p class="result-id">${nationalInterestInformation.id}</p>
         <p class="title"><b>Län</b></p>
         <p>${nationalInterestInformation.county}</p>
         <p class="title"><b>Kommun</b></p>
         <p>${nationalInterestInformation.municipality}</p>`;
 
-        if(nationalInterestInformation.culturalEnvironmentTypes != false){
-          htmlResult+= `<p class="title"><b>Kulturmiljötyper</b></p>
-                        <p>${nationalInterestInformation.culturalEnvironmentTypes}</p>`;        
-        }
-        if(nationalInterestInformation.reason != false){
-          htmlResult+= `<p class="title"><b>Motivering</b></p>
-                        <p>${nationalInterestInformation.reason}</p>`
-        }
-        if(nationalInterestInformation.expression != false){
-          htmlResult += `<p class="title"><b>Uttryck</b></p>
-                         <p>${nationalInterestInformation.expression}</p>`
-        }
-        if(nationalInterestInformation.underInvestigation != false){
-          htmlResult += `<p class="title"><b>Utredningsområde</b></p>
-                         <p>${nationalInterestInformation.underInvestigation}</p>`
-        }
-        if(nationalInterestInformation.firstRevision != false){
-          htmlResult += `<p class="title"><b>Tidigare revidering</b></p>
-                        <p>${nationalInterestInformation.firstRevision}</p>`;
-        }
-        if(nationalInterestInformation.latestRevision != false){
-          htmlResult += `<p class="title"><b>Senaste revidering</b></p>
-                         <p>${nationalInterestInformation.latestRevision}</p>`;
-        }
-        htmlResult+= '</div>';
-  //resultTable.innerHTML += htmlResult;
-
-  let div = document.createElement('div');
-  div.innerHTML = htmlResult;
-  resultTable.append(div);
-  addResultAnimation();
-  openResult();
-}
-
-function ShowMoreInformation(nationalInterestInformation, e) {
-  let informationDiv = document.getElementById("information");
-  informationBuilder = "";
-  if (nationalInterestInformation.name != false) {
-    informationBuilder += `<h2>${nationalInterestInformation.name}</h2>`;
-  }
-  if (nationalInterestInformation.id != false) {
-    informationBuilder += `<p><b>ID:</b> ${nationalInterestInformation.id}</p>`;
-  }
-  if (nationalInterestInformation.county != false) {
-    informationBuilder += `<p><b>Län:</b> ${nationalInterestInformation.county}</p>`;
-  }
-  if (nationalInterestInformation.municipality != false) {
-    informationBuilder += `<p><b>Kommun:</b> ${nationalInterestInformation.municipality}</p>`;
-  }
   if (nationalInterestInformation.culturalEnvironmentTypes != false) {
-    informationBuilder += `<p><b>Kulturmiljötyper:</b> ${nationalInterestInformation.culturalEnvironmentTypes}</p>`;
+    htmlResult += `<p class="title"><b>Kulturmiljötyper</b></p>
+                        <p>${nationalInterestInformation.culturalEnvironmentTypes}</p>`;
   }
   if (nationalInterestInformation.reason != false) {
-    informationBuilder += `<p><b>Motivering:</b> ${nationalInterestInformation.reason}</p>`;
+    htmlResult += `<p class="title"><b>Motivering</b></p>
+                        <p>${nationalInterestInformation.reason}</p>`
   }
   if (nationalInterestInformation.expression != false) {
-    informationBuilder += `<p><b>Uttryck:</b> ${nationalInterestInformation.expression}</p>`;
+    htmlResult += `<p class="title"><b>Uttryck</b></p>
+                         <p>${nationalInterestInformation.expression}</p>`
   }
-  informationBuilder += `<p><b>Utredningsområde:</b> ${nationalInterestInformation.underInvestigation ? "Ja" : "Nej"}</p>`;
+  if (nationalInterestInformation.underInvestigation != false) {
+    htmlResult += `<p class="title"><b>Utredningsområde</b></p>
+                         <p>${nationalInterestInformation.underInvestigation}</p>`
+  }
   if (nationalInterestInformation.firstRevision != false) {
-    informationBuilder += `<p><b>Tidigare revidering:</b> <i>${nationalInterestInformation.firstRevision}</i></p>`;
+    htmlResult += `<p class="title"><b>Tidigare revidering</b></p>
+                        <p>${nationalInterestInformation.firstRevision}</p>`;
   }
   if (nationalInterestInformation.latestRevision != false) {
-    informationBuilder += `<p><b>Senaste revidering:</b> <i>${nationalInterestInformation.latestRevision}</i></p>`;
+    htmlResult += `<p class="title"><b>Senaste revidering</b></p>
+                         <p>${nationalInterestInformation.latestRevision}</p>`;
   }
+  htmlResult += '</div>';
+  //resultTable.innerHTML += htmlResult;
 
-  informationDiv.innerHTML = informationBuilder;
-  informationDiv.style.display = 'block';
+  let newResult = document.createElement('div');
+  newResult.innerHTML = htmlResult;
+  resultTable.append(newResult);
+  addResultAnimation(nationalInterestInformation.id);
 }
 
 function hideMoreInformation() {

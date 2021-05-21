@@ -54,17 +54,17 @@ function searchNationalInterests() {
     });
   }
 
-//Search by municipality
-if (municipalitySearch.value.length > 0 && municipalitySearch.options[municipalitySearch.selectedIndex].text != "Kommun") {
-  map.eachLayer(function (layer) {
-    if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
-      let informationElement = searchNameAndID(layer.feature.properties.RI_id);
-      if (informationElement != null && (String(informationElement.municipality) == String(municipalitySearch.options[municipalitySearch.selectedIndex].text))) {
-        foundByMunicipality.push(layer);
+  //Search by municipality
+  if (municipalitySearch.value.length > 0 && municipalitySearch.options[municipalitySearch.selectedIndex].text != "Kommun") {
+    map.eachLayer(function (layer) {
+      if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
+        let informationElement = searchNameAndID(layer.feature.properties.RI_id);
+        if (informationElement != null && (String(informationElement.municipality) == String(municipalitySearch.options[municipalitySearch.selectedIndex].text))) {
+          foundByMunicipality.push(layer);
+        }
       }
-    }
-  });
-}
+    });
+  }
 
   //Search by county
   if (countySearch.value.length > 0) {
@@ -157,10 +157,29 @@ if (municipalitySearch.value.length > 0 && municipalitySearch.options[municipali
   filteredNationalInterests.forEach(layer => {
     filterLayers.push(layer.feature.properties.RI_id);
   });
-  document.getElementById("showing").innerText = "Vi hittade " + filteredNationalInterests.length + " " + (filteredNationalInterests.length > 1 ? "riksintressen" : "riksintresse") + " som matchade din filtrering.";
-  
-  console.log(filteredNationalInterests);
+
+  let searchResultText = document.getElementById("showing");
+  if (filteredNationalInterests.length > 0) {
+    searchResultText.innerText = "Vi hittade " + filteredNationalInterests.length + " " + (filteredNationalInterests.length != 1 ? "riksintressen" : "riksintresse") + " som matchade din filtrering.";
+    searchResultText.style.visibility = 'visible';
+  }
+  else {
+    searchResultText.style.visibility = 'hidden';
+  }
   return filteredNationalInterests;
+}
+
+
+function getFeaturesInView() {
+  var features = [];
+  map.eachLayer(function (layer) {
+    if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
+      if (map.getBounds().contains(layer._bounds._northEast) || map.getBounds().contains(layer._bounds._southWest)) {
+        features.push(layer.feature);
+      }
+    }
+  });
+  return features;
 }
 
 function showSearchedInput(element) {
