@@ -17,7 +17,6 @@ class NationalInterest {
             this.underInvestigation = false;
         }
     }
-
 }
 function convertDateFormat(inDate) {
     try {

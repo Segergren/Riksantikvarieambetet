@@ -1,27 +1,19 @@
 function searchNameAndID(searchParameter) {
-  let information = document.getElementById('information');
   let foundRiksintresse = null;
   try {
     NATIONAL_INTERESTS.forEach(informationDataElement => {
       if (foundRiksintresse == null) {
         switch (String(searchParameter).toLowerCase()) {
           case String(informationDataElement.id).toLowerCase():
-            information.style.display = "block";
             foundRiksintresse = informationDataElement;
-            showSearchedInput(informationDataElement);
           case String(informationDataElement.namn).toLowerCase():
-            information.style.display = "block";
-            foundRiksintresse = tinformationDataElementrue;
-            showSearchedInput(informationDataElement);
+            foundRiksintresse = informationDataElement;
         }
       }
     });
-    if (foundRiksintresse == false) {
-      information.style.display = "none";
-    }
   }
   catch (error) {
-    information.style.display = "none";
+    console.log(error);
   }
   return foundRiksintresse;
 }
@@ -92,7 +84,6 @@ function searchNationalInterests() {
     map.eachLayer(function (layer) {
       if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
         let informationElement = searchNameAndID(layer.feature.properties.RI_id);
-
         if (informationElement != null && informationElement.culturalEnvironmentTypes != false) {
           let layerHasFilter = false;
           appliedFilters.forEach(filter => {
@@ -111,7 +102,7 @@ function searchNationalInterests() {
 
   let filteredNationalInterests = [];
 
-  //Check if national interest includes all filters
+  //Om riksintresset innehåller alla filter
   filteredNationalInterests = filteredNationalInterests.concat(foundByNameOrID, foundByMunicipality, foundByCounty, foundByCultural);
 
   //Ta bort dubletter
@@ -158,14 +149,7 @@ function searchNationalInterests() {
     filterLayers.push(layer.feature.properties.RI_id);
   });
 
-  let searchResultText = document.getElementById("showing");
-  if (filteredNationalInterests.length > 0) {
-    searchResultText.innerText = "Vi hittade " + filteredNationalInterests.length + " " + (filteredNationalInterests.length != 1 ? "riksintressen" : "riksintresse") + " som matchade din filtrering.";
-    searchResultText.style.visibility = 'visible';
-  }
-  else {
-    searchResultText.style.visibility = 'hidden';
-  }
+  showFoundInterests(filteredNationalInterests);
   return filteredNationalInterests;
 }
 
@@ -182,9 +166,107 @@ function getFeaturesInView() {
   return features;
 }
 
-function showSearchedInput(element) {
-  let information = document.getElementById('information');
-  information.innerHTML = `<h2 id="name">${element.namn}</h2>
-  <p id="id"><b>${element.id}</b></p>
-  <p id="description">${element.motivering, element.uttryck}</p>`;
+function highlightInterestsInsideCounty(countyID) {
+  dimAllLayers();
+  filterLayers.length = 0;
+  map.eachLayer(function (layer) {
+    if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
+      if (layer.feature.properties.LANSKOD == countyID) {
+        resetLayer(layer);
+        filterLayers.push(layer);
+      }
+    }
+  });
+}
+
+function searchWithHighlight(flyTo) {
+  resetFilterList();
+  let filteredNationalInterests = searchNationalInterests();
+  dimAllLayers();
+
+  filteredNationalInterests.forEach(layer => {
+    highlightLayer(layer);
+    loadFilterList(searchNameAndID(layer.feature.properties.RI_id));
+  });
+
+  if (flyTo == "municipality") {
+    if (municipalityElement.value.length > 0) {
+      flyToMunicipality(municipalityElement.value);
+    }
+    else {
+      if (countyElement.value.length > 0) {
+        flyToCounty(countyElement.value);
+      }
+      else {
+
+      }
+    }
+  } else if (flyTo == "county") {
+    if (countyElement.value.length > 0) {
+      flyToCounty(countyElement.value);
+    }
+  }
+  fillFilterList();
+
+  if (municipalityElement.value.length == 0 && countyElement.value.length == 0) {
+    resetAllLayers();
+    map.eachLayer(function (layer) {
+      if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
+        loadFilterList(searchNameAndID(layer.feature.properties.RI_id));
+      }
+    });
+    fillFilterList();
+    searchNationalInterests();
+  }
+}
+
+//FILTER
+function culturalEnvironmentFilter() {
+  let filterElement = document.getElementsByClassName("items")[0];
+  let filters = filterElement.childNodes;
+  let appliedFilters = [];
+
+  filters.forEach(filter => {
+    if (filter.childNodes[0].checked) {
+      appliedFilters.push(filter.childNodes[0].value);
+    }
+  });
+
+  let filteredNationalInterests = searchNationalInterests();
+  dimAllLayers();
+  filteredNationalInterests.forEach(layer => {
+    highlightLayer(layer);
+  });
+}
+
+function seachByCulturalEnvironments(appliedFilters) {
+  if (appliedFilters.length > 0) {
+    filterApplied = true;
+    dimAllLayers();
+  }
+  else {
+    filterApplied = false;
+    resetAllLayers();
+  }
+  filterLayers.length = 0;
+
+  map.eachLayer(function (layer) {
+    if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
+      let informationElement = searchNameAndID(layer.feature.properties.RI_id);
+
+      if (informationElement != null && informationElement.culturalEnvironmentTypes != false) {
+        let layerHasFilter = false;
+        appliedFilters.forEach(filter => {
+          if (informationElement.culturalEnvironmentTypes.includes(filter)) {
+            layerHasFilter = true;
+          }
+        });
+
+        if (layerHasFilter) {
+          highlightLayer(layer);
+          filterLayers.push(layer.feature.properties.RI_id);
+        }
+      }
+    }
+  });
 }

@@ -1,52 +1,55 @@
 html, body {
   height: 96.7%;
 }
-body{
+
+body {
   margin: 0;
 }
 
-.header{
+.header {
   height: 5%;
   margin-bottom: 20px;
-  
 }
-.header img{
+
+.header img {
   margin: 10px;
-  max-width:100%;
-  max-height:100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   overflow: hidden;
 }
 
-.header p{
+.header p {
   height: 5%;
   padding: 0.25em;
   font-size: 18px;
   float: right;
 }
 
-.divider{
+.divider {
   width: 100%;
   height: 2px;
   background-color: gray;
 }
 
-.popup p{
+.popup p {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
 }
-.popup a{
+
+.popup a {
   cursor: pointer;
 }
+
 .popup .name {
   font-weight: bold;
 }
 
-#mapid{
-    margin:0;
-    float:right;
-    min-height: 100%;
-    /*max-width: 170em; */
+#mapid {
+  margin: 0;
+  float: right;
+  min-height: 100%;
+  /*max-width: 170em; */
 }
 
 .map-overlay {
@@ -61,18 +64,61 @@ body{
   padding: 10px;
   display: none;
   z-index: 99;
-  }
+}
 
-h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif; font-size: 24px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 26.4px; } h3 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 15.4px; } p { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 20px; } blockquote { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif; font-size: 21px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 30px; } pre { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif; font-size: 13px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 18.5714px; }
+h1 {
+  font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 24px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 700;
+  line-height: 26.4px;
+}
 
-#information{
+h3 {
+  font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 700;
+  line-height: 15.4px;
+}
+
+p {
+  font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+blockquote {
+  font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 21px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 400;
+  line-height: 30px;
+}
+
+pre {
+  font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 13px;
+  font-style: normal;
+  font-variant: normal;
+  font-weight: 400;
+  line-height: 18.5714px;
+}
+
+#information {
   float: left;
 }
 
 /* SIDEPANEL */
-.sidepanel{
-  float:left;
-  margin:0;
+.sidepanel {
+  float: left;
+  margin: 0;
   max-width: 31em;
   min-height: 100%;
   background-color: white;
@@ -82,12 +128,13 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
   overflow: hidden;
 }
 
-.sidepanel .selection{
+.sidepanel .selection {
   float: left;
   margin: 0.5em;
   width: 100%;
 }
-.sidepanel .selection input{
+
+.sidepanel .selection input {
   float: left;
   min-width: 89.2%;
   padding: 6px;
@@ -97,11 +144,11 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
   border-radius: 2px;
 }
 
-.sidepanel .selection input:hover{
+.sidepanel .selection input:hover {
   border-color: #D94E28;
 }
 
-.sidepanel select{
+.sidepanel select {
   float: left;
   width: 93%;
   padding: 6px;
@@ -111,31 +158,30 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
   border-radius: 2px;
 }
 
-.sidepanel select:hover{
+.sidepanel select:hover {
   border-color: #D94E28;
 }
 
-#information{
+#information {
   font: 12px/20px 'Segoe UI', Arial, Helvetica, sans-serif;
 }
-#information p{
+
+#information p {
   margin: 2px;
 }
 
-
-/* // DROPDOWN CHECKBOX \\ */
-
-.dropdown-check-list{
+/* DROPDOWN CHECKBOX */
+.dropdown-check-list {
   float: left;
   margin: 0.5em;
-  font-family:'Segoe UI', Arial, Helvetica, sans-serif;
+  font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
   font-size: 17px;
   max-width: 100%;
   min-width: 96%;
   border-radius: 3px;
 }
 
-.dropdown-check-list .itemsContainer{
+.dropdown-check-list .itemsContainer {
   max-height: 20em;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -153,7 +199,7 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
   border-radius: 2px;
 }
 
-.dropdown-check-list .anchor:hover{
+.dropdown-check-list .anchor:hover {
   border-color: #D94E28;
 }
 
@@ -193,11 +239,11 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
   display: block;
 }
 
-#result-table{
+/* För result-table */
+#result-table {
   max-height: 80%;
 }
 
-/* Style the button that is used to open and close the collapsible content */
 .collapsible {
   background-color: #eee;
   color: #444;
@@ -212,13 +258,12 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
   border: solid;
 }
 
-/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
 .collapsible:hover {
   background-color: #ccc;
   border-color: #D94E28;
 }
 
-.highlight{
+.highlight {
   background-color: #ccc;
   border-color: #D94E28;
 }
@@ -231,8 +276,7 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
   border-bottom-right-radius: 0px;
 }
 
-
-/* Style the collapsible content. Note: hidden by default */
+/* Innanför resultat */
 .content {
   border-radius: 0px 0px 2px 2px;
   padding: 0 18px;
@@ -250,20 +294,19 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
   visibility: hidden;
 }
 
-.content p{
-  margin:0;
+.content p {
+  margin: 0;
   padding: 0;
 }
 
-.content .title{
+.content .title {
   font-size: 1em;
   margin-top: 10px;
 }
 
-
 .collapsible:after {
   border-radius: 2px 2px 0px 0px;
-  content: '\02795'; /* Unicode character for "plus" sign (+) */
+  content: '\02795'; /* + symbol */
   font-size: 13px;
   color: white;
   float: right;
@@ -271,5 +314,5 @@ h1 { font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Hel
 }
 
 .active:after {
-  content: "\2796"; /* Unicode character for "minus" sign (-) */
+  content: "\2796"; /* - symbol */
 }
