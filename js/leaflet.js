@@ -55,10 +55,9 @@ function AddBackgroundMap() {
   }).addTo(map);
 
 
-  FillMapWithNationalInterests();
-  //FillMapWithLandscape();
-  FillMapWithCounties();
-  FillMapWithMunicipality();
+  fillMapWithNationalInterests();
+  fillMapWithCounties();
+  fillMapWithMunicipality();
   map.on('zoomend', function () {
     updateResultTableOnMove();
   });
@@ -77,8 +76,8 @@ function updateResultTableOnMove() {
   });
 
   layersInsideZoomRange.forEach(layer => {
-    let nationalInterestInformation = FindConnectedInformation(layer);
-    if (nationalInterestInformation != null && inserted < 3) {
+    let nationalInterestInformation = inserted < 3 ? findConnectedInformation(layer) : null;
+    if (nationalInterestInformation != null) {
       if (filteredFeatures.length > 0) {
         if (filteredFeatures.includes(layer)) {
           inserted++;
@@ -93,8 +92,8 @@ function updateResultTableOnMove() {
   });
 }
 
-//Fyller kartan med geodata från geojson
-function FillMapWithCounties() {
+//Fyller kartan med län
+function fillMapWithCounties() {
   var geoJsonStyle = {
     color: '#0800b3',
     weight: 1,
@@ -102,34 +101,16 @@ function FillMapWithCounties() {
     fillColor: '#0800b3',
     fillOpacity: 0
   };
-  $.getJSON("https://o11.se/RAA/län.geojson", function (data) {
-    L.Proj.geoJson(data, {
+  $.getJSON("https://o11.se/RAA/län.geojson", function (geojsonData) {
+    L.Proj.geoJson(geojsonData, {
       onEachFeature: onEachFeatureCounties,
       style: geoJsonStyle
     }).addTo(map);
   });
-
-
 }
 
-function FillMapWithLandscape() {
-  var geoJsonStyle = {
-    color: '#0800b3',
-    weight: 1,
-    opacity: 0,
-    fillColor: '#0800b3',
-    fillOpacity: 0
-  };
-
-  $.getJSON("https://o11.se/RAA/landskap.geojson", function (data) {
-    L.Proj.geoJson(data, {
-      onEachFeature: onEachFeatureLandscape,
-      style: geoJsonStyle
-    }).addTo(map)
-  });
-}
-
-function FillMapWithMunicipality() {
+//Fyller kartan med kommuner
+function fillMapWithMunicipality() {
   var geoJsonStyle = {
     color: '#000000',
     weight: 1,
@@ -137,8 +118,8 @@ function FillMapWithMunicipality() {
     fillColor: '#000000',
     fillOpacity: 0
   };
-  $.getJSON("https://o11.se/RAA/kommun.geojson", function (data) {
-    L.Proj.geoJson(data, {
+  $.getJSON("https://o11.se/RAA/kommun.geojson", function (geojsonData) {
+    L.Proj.geoJson(geojsonData, {
       onEachFeature: onEachFeatureMunicipality,
       style: geoJsonStyle
     }).addTo(map);
@@ -146,8 +127,8 @@ function FillMapWithMunicipality() {
   });
 }
 
-//Fyller kartan med geodata från geojson
-function FillMapWithNationalInterests() {
+//Fyller kartan med riksintressen
+function fillMapWithNationalInterests() {
   var geoJsonStyle = {
     color: "#e6a72e",
     weight: 3,
@@ -156,8 +137,8 @@ function FillMapWithNationalInterests() {
     fillOpacity: 0.4
   };
   let nationalInterests = map.createPane('nationalInterests');
-  $.getJSON("https://o11.se/RAA/geojson.geojson", function (data) {
-    L.Proj.geoJson(data, {
+  $.getJSON("https://o11.se/RAA/geojson.geojson", function (geojsonData) {
+    L.Proj.geoJson(geojsonData, {
       onEachFeature: onEachFeatureGeojson,
       style: geoJsonStyle,
       pane: nationalInterests
@@ -166,30 +147,30 @@ function FillMapWithNationalInterests() {
 
 }
 
-function highlightFeature(e) {
-  highlightResultTable(e.target);
-  highlightLayer(e.target);
+function highlightFeature(geoElement) {
+  highlightOnResultTable(geoElement.target);
+  highlightLayer(geoElement.target);
 }
 
-function resetHighlight(e) {
+function resetHighlight(geoElement) {
   resetHighlightResultTable();
-  if (currentlyViewingAInterest != e.target && filterLayers.includes(e.target.feature.properties.RI_id) == false) {
+  if (currentlyViewingAInterest != geoElement.target && filterLayers.includes(geoElement.target.feature.properties.RI_id) == false) {
     hideHoverInfo();
     if (filterLayers.length == 0) {
-      resetLayer(e.target);
+      resetLayer(geoElement.target);
     }
     else {
-      dimLayer(e.target);
+      dimLayer(geoElement.target);
     }
   }
 }
 
 //Lägger till onhover och onclick-events
 function onEachFeatureCounties(feature, layer) {
-  var opt = document.createElement('option');
-  opt.innerHTML = layer.feature.properties.LnNamn + " län";
-  opt.value = layer.feature.properties.LnKod;
-  countyElement.appendChild(opt);
+  var countyOption = document.createElement('option');
+  countyOption.innerHTML = layer.feature.properties.LnNamn + " län";
+  countyOption.value = layer.feature.properties.LnKod;
+  countyElement.appendChild(countyOption);
   LIST_OF_COUNTIES.push(layer);
 }
 
@@ -199,75 +180,58 @@ function onEachFeatureMunicipality(feature, layer) {
 }
 
 //Lägger till onhover och onclick-events
-function onEachFeatureLandscape(feature, layer) {
-  var opt = document.createElement('option');
-  opt.innerHTML = layer.feature.properties.landskap;
-  opt.value = layer.feature.properties.landskapskod;
-  landscapeElement.appendChild(opt);
-  //layer.bringToBack();
-  LIST_OF_LANDSCAPE.push(layer);
-}
-
-//Lägger till onhover och onclick-events
 function onEachFeatureGeojson(feature, layer) {
   layer.on({
     mouseover: highlightFeature,
     mouseout: resetHighlight,
-    click: OnClickEvent,
+    click: onInterestClickEvent,
   });
-  //layer.bringToFront();
   LIST_OF_LAYERS.push(layer);
 }
 
-
 //Hittar informationen kopplat till en geodata
-function FindConnectedInformation(e) {
-  let selectedInformation;
-  if (e.target != null) {
-    NATIONAL_INTERESTS.forEach(element => {
-      if (String(e.target.feature.properties.RI_id) == String(element.id)) {
-        selectedInformation = element;
+function findConnectedInformation(geoElement) {
+  let returnInfoData;
+  if (geoElement.target != null) {
+    NATIONAL_INTERESTS.forEach(elementInfoData => {
+      if (String(geoElement.target.feature.properties.RI_id) == String(elementInfoData.id)) {
+        returnInfoData = elementInfoData;
       }
     });
   }
-  else if(e.feature != null){
-    NATIONAL_INTERESTS.forEach(element => {
-      if (String(e.feature.properties.RI_id) == String(element.id)) {
-        selectedInformation = element;
+  else if (geoElement.feature != null) {
+    NATIONAL_INTERESTS.forEach(elementInfoData => {
+      if (String(geoElement.feature.properties.RI_id) == String(elementInfoData.id)) {
+        returnInfoData = elementInfoData;
       }
     });
   }
   else {
-    NATIONAL_INTERESTS.forEach(element => {
-      if (String(e.properties.RI_id) == String(element.id)) {
-        selectedInformation = element;
+    NATIONAL_INTERESTS.forEach(elementInfoData => {
+      if (String(geoElement.properties.RI_id) == String(elementInfoData.id)) {
+        returnInfoData = elementInfoData;
       }
     });
   }
-  return selectedInformation;
+  return returnInfoData;
 }
 
-function OnClickEvent(e) {
-  let nationalInterestInformation = FindConnectedInformation(e);
-  currentlyViewingAInterest = e.target;
-  ShowPopUp(nationalInterestInformation, e);
+function onInterestClickEvent(geoElement) {
+  let nationalInterestInformation = findConnectedInformation(geoElement);
+  currentlyViewingAInterest = geoElement.target;
+  showPopUp(nationalInterestInformation, geoElement);
 }
 
 function checkIfInsideCounty(nationalInterest, county) {
   let middle = [nationalInterest.getBounds()._southWest.lat + (Math.abs(nationalInterest.getBounds()._northEast.lat - nationalInterest.getBounds()._southWest.lat)), nationalInterest.getBounds()._southWest.lng + (Math.abs(nationalInterest.getBounds()._northEast.lng - nationalInterest.getBounds()._southWest.lng))]
-  if (county._bounds.contains(middle)) {
-    return true;
-  }
-  else {
-    return false;
-  }
+  return county._bounds.contains(middle) ? true : false;
 }
 
-function openInResultTable(id){
+function openInResultTable(id) {
   var coll = document.getElementsByClassName("collapsible");
   var i;
   for (i = 0; i < coll.length; i++) {
-    if(coll[i].value == id){
+    if (coll[i].value == id) {
       coll[i].classList.add("highlight");
       coll[i].classList.add("active");
       var content = coll[i].nextElementSibling;
@@ -284,33 +248,38 @@ function resetHighlightResultTable() {
   }
 }
 
-function highlightResultTable(layer) {
-  console.log(layer.feature.properties.RI_id);
+function highlightOnResultTable(geoElement) {
   resetHighlightResultTable();
   var coll = document.getElementsByClassName("collapsible");
   var i;
   var foundInResultTable = false;
   for (i = 0; i < coll.length; i++) {
-    if (coll[i].value == layer.feature.properties.RI_id) {
+    if (coll[i].value == geoElement.feature.properties.RI_id) {
       coll[i].classList.add("highlight");
       foundInResultTable = true;
     }
   }
-  if(!foundInResultTable){
-    if(coll.length >= 3){
-      removeInterestFromResultTable(2);
+
+  if (!foundInResultTable) {
+    if (coll.length >= 3) {
+      for (i = coll.length-1; i >= 0; i--) {
+        if (!coll[i].classList.contains("active")) {
+          removeInterestFromResultTable(i);
+          break;
+        }
+      }
     }
 
-    let nationalInterestInformation = FindConnectedInformation(layer);
-    if(nationalInterestInformation != null){
+    let nationalInterestInformation = findConnectedInformation(geoElement);
+    if (nationalInterestInformation != null) {
       addInterestToResultTable(nationalInterestInformation);
-      coll[coll.length-1].classList.add("highlight");
+      coll[coll.length - 1].classList.add("highlight");
     }
   }
 }
 
-function highlightLayer(layer) {
-  layer.setStyle({
+function highlightLayer(geoElement) {
+  geoElement.setStyle({
     weight: 3,
     opacity: 1.0,
     fillOpacity: 0.4,
@@ -319,23 +288,23 @@ function highlightLayer(layer) {
   });
 }
 
-function resetLayer(layer) {
-  layer.setStyle(
+function resetLayer(geoElement) {
+  geoElement.setStyle(
     resetStyle
   );
 }
 
 function resetAllLayers() {
-  map.eachLayer(function (layer) {
-    if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
-      layer.setStyle(
+  map.eachLayer(function (geoElement) {
+    if (geoElement.options.pane.className != undefined && (geoElement.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && geoElement.hasOwnProperty("feature"))) {
+      geoElement.setStyle(
         resetStyle
       );
     }
   });
 }
 
-function dimLayer(layer) {
+function dimLayer(geoElement) {
   var dimStyle = {
     color: "#e6a72e",
     weight: 3,
@@ -344,8 +313,8 @@ function dimLayer(layer) {
     fillOpacity: 0.2
   };
 
-  if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
-    layer.setStyle(
+  if (geoElement.options.pane.className != undefined && (geoElement.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && geoElement.hasOwnProperty("feature"))) {
+    geoElement.setStyle(
       dimStyle
     );
   }
@@ -360,9 +329,9 @@ function dimAllLayers() {
     fillOpacity: 0.2
   };
 
-  map.eachLayer(function (layer) {
-    if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
-      layer.setStyle(
+  map.eachLayer(function (geoElement) {
+    if (geoElement.options.pane.className != undefined && (geoElement.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && geoElement.hasOwnProperty("feature"))) {
+      geoElement.setStyle(
         dimStyle
       );
     }
@@ -370,22 +339,21 @@ function dimAllLayers() {
 }
 
 //Visar popup när användaren klickar på ett riksintresse
-function ShowPopUp(nationalInterestInformation, e) {
+function showPopUp(nationalInterestInformation, geoElement) {
   if (nationalInterestInformation == null) {
     return;
   }
-
   let popupHTMLInformation = `<div class='popup'><p class='name'>${nationalInterestInformation.name}</p><p>ID: ${nationalInterestInformation.id}</p><a onclick="openInResultTable('${nationalInterestInformation.id}')">Visa mer</a></div>`;
 
   //Lägger till en popup med namn, län, och kommun där användarens muspekare står
   let popup = L.popup()
-    .setLatLng(e.latlng)
+    .setLatLng(geoElement.latlng)
     .setContent(popupHTMLInformation)
     .openOn(map);
 
   popup.on('remove', function () {
     currentlyViewingAInterest = null;
-    resetHighlight(e);
+    resetHighlight(geoElement);
     hideMoreInformation();
   });
 }
@@ -395,12 +363,12 @@ function clearResultTable() {
   resultTable.innerHTML = "";
 }
 
-function removeInterestFromResultTable(index){
+function removeInterestFromResultTable(index) {
   let resultTable = document.getElementById("result-table");
   resultTable.childNodes[index].remove();
 }
 
-function addInterestToResultTable(nationalInterestInformation, e, open) {
+function addInterestToResultTable(nationalInterestInformation) {
   let resultTable = document.getElementById("result-table");
   let htmlResult = `
   <button type="button" value="${nationalInterestInformation.id}" class="collapsible">${nationalInterestInformation.name}</button>
@@ -410,35 +378,14 @@ function addInterestToResultTable(nationalInterestInformation, e, open) {
         <p class="title"><b>Län</b></p>
         <p>${nationalInterestInformation.county}</p>
         <p class="title"><b>Kommun</b></p>
-        <p>${nationalInterestInformation.municipality}</p>`;
-
-  if (nationalInterestInformation.culturalEnvironmentTypes != false) {
-    htmlResult += `<p class="title"><b>Kulturmiljötyper</b></p>
-                        <p>${nationalInterestInformation.culturalEnvironmentTypes}</p>`;
-  }
-  if (nationalInterestInformation.reason != false) {
-    htmlResult += `<p class="title"><b>Motivering</b></p>
-                        <p>${nationalInterestInformation.reason}</p>`
-  }
-  if (nationalInterestInformation.expression != false) {
-    htmlResult += `<p class="title"><b>Uttryck</b></p>
-                         <p>${nationalInterestInformation.expression}</p>`
-  }
-  if (nationalInterestInformation.underInvestigation != false) {
-    htmlResult += `<p class="title"><b>Utredningsområde</b></p>
-                         <p>${nationalInterestInformation.underInvestigation}</p>`
-  }
-  if (nationalInterestInformation.firstRevision != false) {
-    htmlResult += `<p class="title"><b>Tidigare revidering</b></p>
-                        <p>${nationalInterestInformation.firstRevision}</p>`;
-  }
-  if (nationalInterestInformation.latestRevision != false) {
-    htmlResult += `<p class="title"><b>Senaste revidering</b></p>
-                         <p>${nationalInterestInformation.latestRevision}</p>`;
-  }
-  htmlResult += '</div>';
-  //resultTable.innerHTML += htmlResult;
-
+        <p>${nationalInterestInformation.municipality}</p>
+        ${nationalInterestInformation.culturalEnvironmentTypes != false ? '<p class="title"><b>Kulturmiljötyper</b></p><p>' + nationalInterestInformation.culturalEnvironmentTypes + '</p>' : ''}
+        ${nationalInterestInformation.reason != false ? '<p class="title"><b>Motivering</b></p> <p>' + nationalInterestInformation.reason + '</p>' : ''}
+        ${nationalInterestInformation.expression != false ? '<p class="title"><b>Uttryck</b></p><p>' + nationalInterestInformation.expression + '</p>' : ''}
+        ${nationalInterestInformation.underInvestigation != false ? '<p class="title"><b>Utredningsområde</b></p><p>' + nationalInterestInformation.underInvestigation + '</p>' : ''}
+        ${nationalInterestInformation.firstRevision != false ? '<p class="title"><b>Tidigare revidering</b></p><p>' + nationalInterestInformation.firstRevision + '</p>' : ''}
+        ${nationalInterestInformation.latestRevision != false ? '<p class="title"><b>Senaste revidering</b></p><p>' + nationalInterestInformation.latestRevision + '</p>' : ''}  
+      </div>`;
   let newResult = document.createElement('div');
   newResult.innerHTML = htmlResult;
   resultTable.append(newResult);
