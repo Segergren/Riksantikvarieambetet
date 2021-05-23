@@ -230,6 +230,13 @@ function FindConnectedInformation(e) {
       }
     });
   }
+  else if(e.feature != null){
+    NATIONAL_INTERESTS.forEach(element => {
+      if (String(e.feature.properties.RI_id) == String(element.id)) {
+        selectedInformation = element;
+      }
+    });
+  }
   else {
     NATIONAL_INTERESTS.forEach(element => {
       if (String(e.properties.RI_id) == String(element.id)) {
@@ -256,6 +263,19 @@ function checkIfInsideCounty(nationalInterest, county) {
   }
 }
 
+function openInResultTable(id){
+  var coll = document.getElementsByClassName("collapsible");
+  var i;
+  for (i = 0; i < coll.length; i++) {
+    if(coll[i].value == id){
+      coll[i].classList.add("highlight");
+      coll[i].classList.add("active");
+      var content = coll[i].nextElementSibling;
+      openResult(content);
+    }
+  }
+}
+
 function resetHighlightResultTable() {
   var coll = document.getElementsByClassName("collapsible");
   var i;
@@ -269,9 +289,22 @@ function highlightResultTable(layer) {
   resetHighlightResultTable();
   var coll = document.getElementsByClassName("collapsible");
   var i;
+  var foundInResultTable = false;
   for (i = 0; i < coll.length; i++) {
     if (coll[i].value == layer.feature.properties.RI_id) {
       coll[i].classList.add("highlight");
+      foundInResultTable = true;
+    }
+  }
+  if(!foundInResultTable){
+    if(coll.length >= 3){
+      removeInterestFromResultTable(2);
+    }
+
+    let nationalInterestInformation = FindConnectedInformation(layer);
+    if(nationalInterestInformation != null){
+      addInterestToResultTable(nationalInterestInformation);
+      coll[coll.length-1].classList.add("highlight");
     }
   }
 }
@@ -342,7 +375,7 @@ function ShowPopUp(nationalInterestInformation, e) {
     return;
   }
 
-  let popupHTMLInformation = `<div class='popup'><p class='name'>${nationalInterestInformation.name}</p><p>ID: ${nationalInterestInformation.id}</p><a href="#information">Visa mer</a></div>`;
+  let popupHTMLInformation = `<div class='popup'><p class='name'>${nationalInterestInformation.name}</p><p>ID: ${nationalInterestInformation.id}</p><a onclick="openInResultTable('${nationalInterestInformation.id}')">Visa mer</a></div>`;
 
   //Lägger till en popup med namn, län, och kommun där användarens muspekare står
   let popup = L.popup()
@@ -360,6 +393,11 @@ function ShowPopUp(nationalInterestInformation, e) {
 function clearResultTable() {
   let resultTable = document.getElementById("result-table");
   resultTable.innerHTML = "";
+}
+
+function removeInterestFromResultTable(index){
+  let resultTable = document.getElementById("result-table");
+  resultTable.childNodes[index].remove();
 }
 
 function addInterestToResultTable(nationalInterestInformation, e, open) {
@@ -406,6 +444,8 @@ function addInterestToResultTable(nationalInterestInformation, e, open) {
   resultTable.append(newResult);
   addResultAnimation(nationalInterestInformation.id);
 }
+
+
 
 function hideMoreInformation() {
   let informationDiv = document.getElementById("information");
