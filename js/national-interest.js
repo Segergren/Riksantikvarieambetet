@@ -1,3 +1,4 @@
+//Representerar ett riksintresse
 class NationalInterest {
     constructor(element) {
         this.name = element.Namn_RI;
@@ -18,6 +19,8 @@ class NationalInterest {
         }
     }
 }
+
+//Konverterar datumet till yyyy-mm-dd istället för m-d-yy
 function convertDateFormat(inDate) {
     try {
         var splittedDate = inDate.split("/");

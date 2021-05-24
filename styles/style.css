@@ -177,7 +177,7 @@ pre {
   font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
   font-size: 17px;
   max-width: 100%;
-  min-width: 96%;
+  min-width: 97%;
   border-radius: 3px;
 }
 
@@ -315,4 +315,25 @@ pre {
 
 .active:after {
   content: "\2796"; /* - symbol */
+}
+
+@media screen and (max-width: 1400px) {
+  .header{
+    height: 7%;
+  }
+  .content{
+    width: 84.8%;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .sidepanel{
+    max-width: 27em;
+  }
+  .dropdown-check-list{
+    min-width: 94.2%;
+  }
+  .content{
+    width: 83.6%;
+  }
 }

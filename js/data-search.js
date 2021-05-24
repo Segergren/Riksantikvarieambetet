@@ -1,13 +1,14 @@
+//Sök efter riksintresse med hjälp av ID eller namn
 function searchNameAndID(searchParameter) {
   let foundRiksintresse = null;
   try {
     NATIONAL_INTERESTS.forEach(informationDataElement => {
       if (foundRiksintresse == null) {
-        switch (String(searchParameter).toLowerCase()) {
-          case String(informationDataElement.id).toLowerCase():
-            foundRiksintresse = informationDataElement;
-          case String(informationDataElement.namn).toLowerCase():
-            foundRiksintresse = informationDataElement;
+        if (String(searchParameter).toLowerCase() == String(informationDataElement.id).toLowerCase()) {
+          foundRiksintresse = informationDataElement;
+        }
+        else if (String(informationDataElement.name).toLowerCase().includes(String(searchParameter).toLowerCase())){
+          foundRiksintresse = informationDataElement;
         }
       }
     });
@@ -18,6 +19,7 @@ function searchNameAndID(searchParameter) {
   return foundRiksintresse;
 }
 
+//Söker alla riksintressen med filtrering
 function searchNationalInterests() {
   let nameAndIdSearch = document.getElementById('search');
   let countySearch = document.getElementById('county');
@@ -29,7 +31,7 @@ function searchNationalInterests() {
   let foundByMunicipality = [];
   let foundByCultural = [];
 
-  //Search by name or id
+  //Om filtrering med namn/id är aktiv
   if (nameAndIdSearch.value.length > 0) {
     map.eachLayer(function (layer) {
       if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
@@ -46,7 +48,7 @@ function searchNationalInterests() {
     });
   }
 
-  //Search by municipality
+  //Om filtrering med kommun är aktiv
   if (municipalitySearch.value.length > 0 && municipalitySearch.options[municipalitySearch.selectedIndex].text != "Kommun") {
     map.eachLayer(function (layer) {
       if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
@@ -58,7 +60,7 @@ function searchNationalInterests() {
     });
   }
 
-  //Search by county
+  //Om filtrering med län är aktiv
   if (countySearch.value.length > 0) {
     map.eachLayer(function (layer) {
       if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
@@ -69,17 +71,18 @@ function searchNationalInterests() {
     });
   }
 
-  //Search by cultural
+
   let filters = culturalEnvironmentTypeSearch.childNodes;
   let appliedFilters = [];
 
-  //Get filters
+  //Hämta filter
   filters.forEach(filter => {
     if (filter.childNodes[0].checked) {
       appliedFilters.push(filter.childNodes[0].value);
     }
   });
 
+  //Om filtrering med kulturmiljötyper är aktiv 
   if (appliedFilters.length > 0) {
     map.eachLayer(function (layer) {
       if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
@@ -144,6 +147,7 @@ function searchNationalInterests() {
       }
     }
   };
+  
   filterLayers.length = 0;
   filteredNationalInterests.forEach(layer => {
     filterLayers.push(layer.feature.properties.RI_id);
@@ -153,19 +157,20 @@ function searchNationalInterests() {
   return filteredNationalInterests;
 }
 
-
-function getFeaturesInView() {
-  var features = [];
+//Returnerar lista med layers som befinner sig innanför användarens karta
+function getLayersInView() {
+  var layersList = [];
   map.eachLayer(function (layer) {
     if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
       if (map.getBounds().contains(layer._bounds._northEast) || map.getBounds().contains(layer._bounds._southWest)) {
-        features.push(layer.feature);
+        layersList.push(layer.feature);
       }
     }
   });
-  return features;
+  return layersList;
 }
 
+//Highlightar alla layers innanför en kommun
 function highlightInterestsInsideCounty(countyID) {
   dimAllLayers();
   filterLayers.length = 0;
@@ -179,6 +184,7 @@ function highlightInterestsInsideCounty(countyID) {
   });
 }
 
+//Söker efter layers att highlighta och flytta användaren dit
 function searchWithHighlight(flyTo) {
   resetFilterList();
   let filteredNationalInterests = searchNationalInterests();
@@ -218,55 +224,4 @@ function searchWithHighlight(flyTo) {
     fillFilterList();
     searchNationalInterests();
   }
-}
-
-//FILTER
-function culturalEnvironmentFilter() {
-  let filterElement = document.getElementsByClassName("items")[0];
-  let filters = filterElement.childNodes;
-  let appliedFilters = [];
-
-  filters.forEach(filter => {
-    if (filter.childNodes[0].checked) {
-      appliedFilters.push(filter.childNodes[0].value);
-    }
-  });
-
-  let filteredNationalInterests = searchNationalInterests();
-  dimAllLayers();
-  filteredNationalInterests.forEach(layer => {
-    highlightLayer(layer);
-  });
-}
-
-function seachByCulturalEnvironments(appliedFilters) {
-  if (appliedFilters.length > 0) {
-    filterApplied = true;
-    dimAllLayers();
-  }
-  else {
-    filterApplied = false;
-    resetAllLayers();
-  }
-  filterLayers.length = 0;
-
-  map.eachLayer(function (layer) {
-    if (layer.options.pane.className != undefined && (layer.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && layer.hasOwnProperty("feature"))) {
-      let informationElement = searchNameAndID(layer.feature.properties.RI_id);
-
-      if (informationElement != null && informationElement.culturalEnvironmentTypes != false) {
-        let layerHasFilter = false;
-        appliedFilters.forEach(filter => {
-          if (informationElement.culturalEnvironmentTypes.includes(filter)) {
-            layerHasFilter = true;
-          }
-        });
-
-        if (layerHasFilter) {
-          highlightLayer(layer);
-          filterLayers.push(layer.feature.properties.RI_id);
-        }
-      }
-    }
-  });
 }

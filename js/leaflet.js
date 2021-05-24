@@ -1,13 +1,7 @@
-var selectedEnvironmentTypes = document.getElementById('culturalEnvironmentTypes');
-selectedEnvironmentTypes.getElementsByClassName('anchor')[0].onclick = function (evt) {
-  if (selectedEnvironmentTypes.classList.contains('visible'))
-    selectedEnvironmentTypes.classList.remove('visible');
-  else
-    selectedEnvironmentTypes.classList.add('visible');
-}
-
 let environmentFilterList = [];
 let municipalityFilterList = [];
+let currentlyViewingAInterest = null;
+let filterLayers = [];
 
 var resetStyle = {
   color: "#e6a72e",
@@ -16,13 +10,6 @@ var resetStyle = {
   fillColor: '#e6a72e',
   fillOpacity: 0.4
 };
-
-let currentlyViewingAInterest = null;
-let filterLayers = [];
-
-function createTriggerOnLoad() {
-  getRiksintresseData();
-}
 
 //Skapar en ny mapp med EPSG:3006
 function CreateNewMap() {
@@ -50,14 +37,16 @@ function AddBackgroundMap() {
   L.tileLayer('http://api.geosition.com/tile/osm-bright-3006/{z}/{x}/{y}.png', {
     maxZoom: 14,
     minZoom: 0,
-    continuousWorld: true,
+    continuousWorld: false,
     attribution: 'Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>, Imagery &copy; 2013 <a href="http://www.kartena.se/">Kartena</a>'
   }).addTo(map);
 
-
+  //Fyll kartan med län, kommuner och riksintressen
   fillMapWithNationalInterests();
   fillMapWithCounties();
   fillMapWithMunicipality();
+
+  //När användaren flyttar på kartan
   map.on('zoomend', function () {
     updateResultTableOnMove();
   });
@@ -66,8 +55,9 @@ function AddBackgroundMap() {
   });
 }
 
+//Uppdatera result-table när användaren flyttar på kartan
 function updateResultTableOnMove() {
-  let layersInsideZoomRange = getFeaturesInView();
+  let layersInsideZoomRange = getLayersInView();
   clearResultTable();
   let inserted = 0;
   let filteredFeatures = [];
@@ -147,11 +137,13 @@ function fillMapWithNationalInterests() {
 
 }
 
+//Highlightar på kartan samt i result-table
 function highlightFeature(geoElement) {
   highlightOnResultTable(geoElement.target);
   highlightLayer(geoElement.target);
 }
 
+//Tar bort highlight på kartan och result-table
 function resetHighlight(geoElement) {
   resetHighlightResultTable();
   if (currentlyViewingAInterest != geoElement.target && filterLayers.includes(geoElement.target.feature.properties.RI_id) == false) {
@@ -164,7 +156,7 @@ function resetHighlight(geoElement) {
   }
 }
 
-//Lägger till onhover och onclick-events
+//Lägger till län i sidopanelen samt i LIST_OF_COUNTIES-arrayen
 function onEachFeatureCounties(feature, layer) {
   var countyOption = document.createElement('option');
   countyOption.innerHTML = layer.feature.properties.LnNamn + " län";
@@ -173,12 +165,13 @@ function onEachFeatureCounties(feature, layer) {
   LIST_OF_COUNTIES.push(layer);
 }
 
+//Lägger till kommun i sidopanelen och i LIST_OF_MUNICIPALITY-arrayen
 function onEachFeatureMunicipality(feature, layer) {
   LIST_OF_MUNICIPALITY.push(layer);
   municipalityFilterList.push(layer);
 }
 
-//Lägger till onhover och onclick-events
+//Lägger till onhover och onclick-events på varje riksintresse
 function onEachFeatureGeojson(feature, layer) {
   layer.on({
     mouseover: highlightFeature,
@@ -188,7 +181,7 @@ function onEachFeatureGeojson(feature, layer) {
   LIST_OF_LAYERS.push(layer);
 }
 
-//Hittar informationen kopplat till en geodata
+//Hittar informationen kopplat till en geodata (layer)
 function findConnectedInformation(geoElement) {
   let returnInfoData;
   if (geoElement.target != null) {
@@ -215,17 +208,14 @@ function findConnectedInformation(geoElement) {
   return returnInfoData;
 }
 
+//När en användare klickar på ett riksintresse
 function onInterestClickEvent(geoElement) {
   let nationalInterestInformation = findConnectedInformation(geoElement);
   currentlyViewingAInterest = geoElement.target;
   showPopUp(nationalInterestInformation, geoElement);
 }
 
-function checkIfInsideCounty(nationalInterest, county) {
-  let middle = [nationalInterest.getBounds()._southWest.lat + (Math.abs(nationalInterest.getBounds()._northEast.lat - nationalInterest.getBounds()._southWest.lat)), nationalInterest.getBounds()._southWest.lng + (Math.abs(nationalInterest.getBounds()._northEast.lng - nationalInterest.getBounds()._southWest.lng))]
-  return county._bounds.contains(middle) ? true : false;
-}
-
+//Highlightar en layer
 function highlightLayer(geoElement) {
   geoElement.setStyle({
     weight: 3,
@@ -236,12 +226,14 @@ function highlightLayer(geoElement) {
   });
 }
 
+//Tar bort highlight och dim från ett layer
 function resetLayer(geoElement) {
   geoElement.setStyle(
     resetStyle
   );
 }
 
+//Tar bort highlight och dim från samtliga layers
 function resetAllLayers() {
   map.eachLayer(function (geoElement) {
     if (geoElement.options.pane.className != undefined && (geoElement.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && geoElement.hasOwnProperty("feature"))) {
@@ -252,6 +244,7 @@ function resetAllLayers() {
   });
 }
 
+//Dimmar ett layer
 function dimLayer(geoElement) {
   var dimStyle = {
     color: "#e6a72e",
@@ -268,6 +261,7 @@ function dimLayer(geoElement) {
   }
 }
 
+//Dimmar samtliga layers
 function dimAllLayers() {
   var dimStyle = {
     color: "#e6a72e",
@@ -305,6 +299,7 @@ function showPopUp(nationalInterestInformation, geoElement) {
   });
 }
 
+//Flytta kartan till ett riksintresse
 function flyToRiksintresse(informationElement) {
   geojsonElement = null;
   LIST_OF_LAYERS.forEach(layer => {
@@ -316,6 +311,7 @@ function flyToRiksintresse(informationElement) {
   map.flyToBounds(geojsonElement._bounds);
 }
 
+//Flytta kartan till ett län
 function flyToCounty(countyID) {
   geojsonElement = null;
   LIST_OF_COUNTIES.forEach(layer => {
@@ -327,6 +323,7 @@ function flyToCounty(countyID) {
   map.flyToBounds(geojsonElement._bounds);
 }
 
+//Flytta kartan till en kommun
 function flyToMunicipality(municipalityID) {
   geojsonElement = null;
   LIST_OF_MUNICIPALITY.forEach(layer => {
@@ -335,12 +332,4 @@ function flyToMunicipality(municipalityID) {
     }
   });
   map.flyToBounds(geojsonElement._bounds);
-}
-
-function redraw() {
-  var full_width = $('body').width();
-  var left_width = $('.sidepanel').width();
-  var left_height = $('.sidepanel').height();
-  $('#mapid').width(full_width - left_width - 1);
-  $("#mapid").height(left_height);
 }
