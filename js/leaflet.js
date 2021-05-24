@@ -59,7 +59,7 @@ function AddBackgroundMap() {
 function updateResultTableOnMove() {
   let layersInsideZoomRange = getLayersInView();
   clearResultTable();
-  let inserted = 0;
+  let inserted = document.getElementsByClassName("collapsible").length;
   let filteredFeatures = [];
   searchNationalInterests().forEach(layer => {
     filteredFeatures.push(layer.feature);
@@ -70,13 +70,18 @@ function updateResultTableOnMove() {
     if (nationalInterestInformation != null) {
       if (filteredFeatures.length > 0) {
         if (filteredFeatures.includes(layer)) {
-          inserted++;
-          addInterestToResultTable(nationalInterestInformation, layer, true);
+
+          let addedInterest = addInterestToResultTable(nationalInterestInformation, layer, true);
+          if (addedInterest != false) {
+            inserted++;
+          }
         }
       }
       else {
-        inserted++;
-        addInterestToResultTable(nationalInterestInformation, layer, true);
+        let addedInterest = addInterestToResultTable(nationalInterestInformation, layer, true);
+        if (addedInterest != false) {
+          inserted++;
+        }
       }
     }
   });
@@ -106,13 +111,14 @@ function fillMapWithMunicipality() {
     weight: 1,
     opacity: 0.05,
     fillColor: '#000000',
-    fillOpacity: 0
+    fillOpacity: 0,
   };
   $.getJSON("https://o11.se/RAA/kommun.geojson", function (geojsonData) {
     L.Proj.geoJson(geojsonData, {
       onEachFeature: onEachFeatureMunicipality,
-      style: geoJsonStyle
+      style: geoJsonStyle,
     }).addTo(map);
+
     loadMunicipalityList();
   });
 }

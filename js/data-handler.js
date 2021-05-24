@@ -16,7 +16,7 @@ function loadRiksintresseDataToArray(jsonData) {
             if (elementNumbers <= 9) {
                 element.RI_ID = element.RI_ID.replace(elementNumbers, "0" + elementNumbers);
             }
-            
+
             element.RI_ID = element.RI_ID.replace(" och ", ", ");
             let RI_IDArray = element.RI_ID.split(", ");
 

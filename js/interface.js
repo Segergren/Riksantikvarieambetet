@@ -47,7 +47,7 @@ function fillFilterList() {
 }
 
 //När användaren klickar i/ur en kulturmiljötyp på sidopanelen
-function culturalEnvironmentFilter() {  
+function culturalEnvironmentFilter() {
   let filteredNationalInterests = searchNationalInterests();
   dimAllLayers();
   filteredNationalInterests.forEach(layer => {
@@ -113,7 +113,9 @@ function resetHighlightResultTable() {
   var coll = document.getElementsByClassName("collapsible");
   var i;
   for (i = 0; i < coll.length; i++) {
-    coll[i].classList.remove("highlight");
+    if (!coll[i].classList.contains("active")) {
+      coll[i].classList.remove("highlight");
+    }
   }
 }
 
@@ -132,8 +134,8 @@ function highlightOnResultTable(geoElement) {
 
   if (!foundInResultTable) {
     if (coll.length >= 3) {
-      for (i = coll.length - 1; i >= 0; i--) {
-        if (!coll[i].classList.contains("active")) {
+      for (i = coll.length; i > 0; i--) {
+        if (!coll[i - 1].classList.contains("active")) {
           removeInterestFromResultTable(i);
           break;
         }
@@ -148,10 +150,14 @@ function highlightOnResultTable(geoElement) {
   }
 }
 
-//Tar bort samtliga riksintressen från result-table
+//Tar bort samtliga riksintressen från result-table om de inte är aktiva
 function clearResultTable() {
-  let resultTable = document.getElementById("result-table");
-  resultTable.innerHTML = "";
+  var coll = document.getElementsByClassName("collapsible");
+  for (i = 0; i < coll.length - 1; i++) {
+    if (!coll[i].classList.contains("active")) {
+      coll[i].parentElement.remove();
+    }
+  }
 }
 
 //Tar bort ett riksintresse från result-table baserat på index
@@ -160,12 +166,25 @@ function removeInterestFromResultTable(index) {
   resultTable.childNodes[index].remove();
 }
 
-//Lägger till ett riksintresse till result-table
+//Lägger till ett riksintresse till result-table om det inte är highlightat
 function addInterestToResultTable(nationalInterestInformation) {
+  let alreadyInTable = false;
   let resultTable = document.getElementById("result-table");
-  let htmlResult = `
+  resultTable.childNodes.forEach(childNodes => {
+    if (childNodes.childNodes[1] instanceof HTMLButtonElement) {
+      if (childNodes.childNodes[1].value == nationalInterestInformation.id) {
+        alreadyInTable = true;
+      }
+    }
+  });
+  if (!alreadyInTable) {
+    let htmlResult = `
     <button type="button" value="${nationalInterestInformation.id}" class="collapsible">${nationalInterestInformation.name}</button>
         <div class="content">
+        <a onclick=navigateToPoint("${nationalInterestInformation.id}")>
+        <img alt="map icon" src="./mapicon.png"
+          width=50" height="50">
+        </a>
           <p class="title"><b>ID</b></p>
           <p class="result-id">${nationalInterestInformation.id}</p>
           <p class="title"><b>Län</b></p>
@@ -179,12 +198,15 @@ function addInterestToResultTable(nationalInterestInformation) {
           ${nationalInterestInformation.firstRevision != false ? '<p class="title"><b>Tidigare revidering</b></p><p>' + nationalInterestInformation.firstRevision + '</p>' : ''}
           ${nationalInterestInformation.latestRevision != false ? '<p class="title"><b>Senaste revidering</b></p><p>' + nationalInterestInformation.latestRevision + '</p>' : ''}  
         </div>`;
-  let newResult = document.createElement('div');
-  newResult.innerHTML = htmlResult;
-  resultTable.append(newResult);
-  addResultAnimation(nationalInterestInformation.id);
+    let newResult = document.createElement('div');
+    newResult.innerHTML = htmlResult;
+    resultTable.append(newResult);
+    addResultAnimation(nationalInterestInformation.id);
+  }
+  else {
+    return false;
+  }
 }
-
 //När användaren uppdaterar sökning av namn/id
 const searchElement = document.querySelector('#search');
 searchElement.addEventListener('change', (event) => {
@@ -230,6 +252,7 @@ function addResultAnimation(id) {
     if (coll[i].value == id) {
       coll[i].addEventListener("click", function () {
         this.classList.toggle("active");
+        this.classList.toggle("highlight");
         var content = this.nextElementSibling;
         if (content.style.maxHeight) {
           content.style.maxHeight = null;

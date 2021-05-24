@@ -7,7 +7,7 @@ function searchNameAndID(searchParameter) {
         if (String(searchParameter).toLowerCase() == String(informationDataElement.id).toLowerCase()) {
           foundRiksintresse = informationDataElement;
         }
-        else if (String(informationDataElement.name).toLowerCase().includes(String(searchParameter).toLowerCase())){
+        else if (String(informationDataElement.name).toLowerCase().includes(String(searchParameter).toLowerCase())) {
           foundRiksintresse = informationDataElement;
         }
       }
@@ -147,7 +147,7 @@ function searchNationalInterests() {
       }
     }
   };
-  
+
   filterLayers.length = 0;
   filteredNationalInterests.forEach(layer => {
     filterLayers.push(layer.feature.properties.RI_id);
@@ -203,9 +203,6 @@ function searchWithHighlight(flyTo) {
       if (countyElement.value.length > 0) {
         flyToCounty(countyElement.value);
       }
-      else {
-
-      }
     }
   } else if (flyTo == "county") {
     if (countyElement.value.length > 0) {
@@ -224,4 +221,9 @@ function searchWithHighlight(flyTo) {
     fillFilterList();
     searchNationalInterests();
   }
+}
+
+function navigateToPoint(id) {
+  let informationElement = searchNameAndID(id);
+  flyToRiksintresse(informationElement);
 }

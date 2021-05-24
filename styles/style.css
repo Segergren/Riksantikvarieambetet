@@ -116,6 +116,7 @@ pre {
 }
 
 /* SIDEPANEL */
+
 .sidepanel {
   float: left;
   margin: 0;
@@ -171,6 +172,7 @@ pre {
 }
 
 /* DROPDOWN CHECKBOX */
+
 .dropdown-check-list {
   float: left;
   margin: 0.5em;
@@ -240,6 +242,7 @@ pre {
 }
 
 /* För result-table */
+
 #result-table {
   max-height: 80%;
 }
@@ -277,6 +280,7 @@ pre {
 }
 
 /* Innanför resultat */
+
 .content {
   border-radius: 0px 0px 2px 2px;
   padding: 0 18px;
@@ -299,6 +303,12 @@ pre {
   padding: 0;
 }
 
+.content img {
+  padding-top: 10px;
+  float: right;
+  cursor: pointer;
+}
+
 .content .title {
   font-size: 1em;
   margin-top: 10px;
@@ -306,7 +316,8 @@ pre {
 
 .collapsible:after {
   border-radius: 2px 2px 0px 0px;
-  content: '\02795'; /* + symbol */
+  content: '\02795';
+  /* + symbol */
   font-size: 13px;
   color: white;
   float: right;
@@ -314,26 +325,27 @@ pre {
 }
 
 .active:after {
-  content: "\2796"; /* - symbol */
+  content: "\2796";
+  /* - symbol */
 }
 
 @media screen and (max-width: 1400px) {
-  .header{
+  .header {
     height: 7%;
   }
-  .content{
+  .content {
     width: 84.8%;
   }
 }
 
 @media screen and (max-width: 992px) {
-  .sidepanel{
+  .sidepanel {
     max-width: 27em;
   }
-  .dropdown-check-list{
+  .dropdown-check-list {
     min-width: 94.2%;
   }
-  .content{
+  .content {
     width: 83.6%;
   }
 }
