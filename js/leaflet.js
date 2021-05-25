@@ -34,7 +34,7 @@ function CreateNewMap() {
 
 //Lägger till bakgrundskartan.
 function AddBackgroundMap() {
-  L.tileLayer('http://api.geosition.com/tile/osm-bright-3006/{z}/{x}/{y}.png', {
+  L.tileLayer('https://api.geosition.com/tile/osm-bright-3006/{z}/{x}/{y}.png', {
     maxZoom: 14,
     minZoom: 0,
     continuousWorld: false,
@@ -66,7 +66,7 @@ function updateResultTableOnMove() {
   });
 
   layersInsideZoomRange.forEach(layer => {
-    let nationalInterestInformation = inserted < 3 ? findConnectedInformation(layer) : null;
+    let nationalInterestInformation = inserted < 8 ? findConnectedInformation(layer) : null;
     if (nationalInterestInformation != null) {
       if (filteredFeatures.length > 0) {
         if (filteredFeatures.includes(layer)) {
@@ -303,6 +303,12 @@ function showPopUp(nationalInterestInformation, geoElement) {
     currentlyViewingAInterest = null;
     resetHighlight(geoElement);
   });
+}
+
+//Navigera till ett riksintresse efter att ha hämtat informationen om den
+function navigateToPoint(id) {
+  let informationElement = searchNameAndID(id);
+  flyToRiksintresse(informationElement);
 }
 
 //Flytta kartan till ett riksintresse

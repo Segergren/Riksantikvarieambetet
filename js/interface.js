@@ -133,7 +133,7 @@ function highlightOnResultTable(geoElement) {
   }
 
   if (!foundInResultTable) {
-    if (coll.length >= 3) {
+    if (coll.length >= 8) {
       for (i = coll.length; i > 0; i--) {
         if (!coll[i - 1].classList.contains("active")) {
           removeInterestFromResultTable(i);

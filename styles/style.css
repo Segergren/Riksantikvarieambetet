@@ -4,6 +4,8 @@ html, body {
 
 body {
   margin: 0;
+  max-height: 100%;
+  overflow-y: hidden;
 }
 
 .header {
@@ -241,10 +243,38 @@ pre {
   display: block;
 }
 
-/* För result-table */
 
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+
+/* För result-table */
 #result-table {
-  max-height: 80%;
+  position: absolute;
+  margin-top: 13em;
+  max-height: 53.5%;
+  max-width: 31em;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+#result-table div{
+  padding-right: 0 !important;
 }
 
 .collapsible {
@@ -252,11 +282,12 @@ pre {
   color: #444;
   cursor: pointer;
   padding: 18px;
-  width: 93%;
+  min-width: 30.5em;
   text-align: left;
   outline: none;
   font-size: 15px;
   margin: 0.5em;
+  margin-right: 2.1em;
   margin-bottom: 0;
   border: solid;
 }
@@ -288,9 +319,8 @@ pre {
   background-color: white;
   max-height: 0;
   overflow: hidden;
-  width: 84.5%;
-  margin: 0.5em;
-  margin-top: 0;
+  width: 10em;
+  margin-left: 0.45em;
   transition: max-height 0.2s ease-out;
   border: solid;
   border-color: #D94E28;
@@ -334,7 +364,7 @@ pre {
     height: 7%;
   }
   .content {
-    width: 84.8%;
+    width: 27.25em;
   }
 }
 
@@ -346,6 +376,15 @@ pre {
     min-width: 94.2%;
   }
   .content {
-    width: 83.6%;
+    width: 23.5em;
+  }
+
+  .collapsible{
+    min-width: 26.5em;
+  }
+  #result-table{
+    min-width: 25.5em;
+    max-width: 25.5em;
+    padding-right: 1.5em;
   }
 }

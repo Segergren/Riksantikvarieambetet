@@ -222,8 +222,3 @@ function searchWithHighlight(flyTo) {
     searchNationalInterests();
   }
 }
-
-function navigateToPoint(id) {
-  let informationElement = searchNameAndID(id);
-  flyToRiksintresse(informationElement);
-}
