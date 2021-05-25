@@ -66,11 +66,10 @@ function updateResultTableOnMove() {
   });
 
   layersInsideZoomRange.forEach(layer => {
-    let nationalInterestInformation = inserted < 8 ? findConnectedInformation(layer) : null;
+    let nationalInterestInformation = inserted < 20 ? findConnectedInformation(layer) : null;
     if (nationalInterestInformation != null) {
       if (filteredFeatures.length > 0) {
         if (filteredFeatures.includes(layer)) {
-
           let addedInterest = addInterestToResultTable(nationalInterestInformation, layer, true);
           if (addedInterest != false) {
             inserted++;
@@ -153,12 +152,12 @@ function highlightFeature(geoElement) {
 function resetHighlight(geoElement) {
   resetHighlightResultTable();
   if (currentlyViewingAInterest != geoElement.target && filterLayers.includes(geoElement.target.feature.properties.RI_id) == false) {
-    if (filterLayers.length == 0) {
-      resetLayer(geoElement.target);
-    }
-    else {
-      dimLayer(geoElement.target);
-    }
+      if (filterLayers.length == 0) {
+        resetLayer(geoElement.target);
+      }
+      else {
+        dimLayer(geoElement.target);
+      }
   }
 }
 

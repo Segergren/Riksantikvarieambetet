@@ -50,9 +50,14 @@ function fillFilterList() {
 function culturalEnvironmentFilter() {
   let filteredNationalInterests = searchNationalInterests();
   dimAllLayers();
-  filteredNationalInterests.forEach(layer => {
-    highlightLayer(layer);
-  });
+  if (filteredNationalInterests.length > 0) {
+    filteredNationalInterests.forEach(layer => {
+      highlightLayer(layer);
+    });
+  }
+  else {
+    resetAllLayers();
+  }
 }
 
 //Uppdaterar texten uppe i högra hörnet för att visa hur många riksintressen sökningen ledde till
@@ -104,6 +109,8 @@ function openInResultTable(id) {
       coll[i].classList.add("active");
       var content = coll[i].nextElementSibling;
       openResult(content);
+      setTimeout(function(){ coll[i].nextElementSibling.scrollIntoView({behavior: "smooth", block: "end"}); }, 250);
+      break;
     }
   }
 }
@@ -133,7 +140,7 @@ function highlightOnResultTable(geoElement) {
   }
 
   if (!foundInResultTable) {
-    if (coll.length >= 8) {
+    /*if (coll.length >= 8) {
       for (i = coll.length; i > 0; i--) {
         if (!coll[i - 1].classList.contains("active")) {
           removeInterestFromResultTable(i);
@@ -141,6 +148,7 @@ function highlightOnResultTable(geoElement) {
         }
       }
     }
+    */
 
     let nationalInterestInformation = findConnectedInformation(geoElement);
     if (nationalInterestInformation != null) {
@@ -179,7 +187,7 @@ function addInterestToResultTable(nationalInterestInformation) {
   });
   if (!alreadyInTable) {
     let htmlResult = `
-    <button type="button" value="${nationalInterestInformation.id}" class="collapsible">${nationalInterestInformation.name}</button>
+    <button type="button" onmouseleave="resetHighlightFromResultTable('${nationalInterestInformation.id}')" onmouseover="highlightFromResultTable('${nationalInterestInformation.id}')" value="${nationalInterestInformation.id}" class="collapsible">${nationalInterestInformation.name}</button>
         <div class="content">
         <a onclick=navigateToPoint("${nationalInterestInformation.id}")>
         <img alt="map icon" src="./mapicon.png"
@@ -281,3 +289,31 @@ function redraw() {
   $('#mapid').width(full_width - left_width - 1);
   $("#mapid").height(left_height);
 }
+
+function highlightFromResultTable(id) {
+  map.eachLayer(function (geoElement) {
+    if (geoElement.options.pane.className != undefined && (geoElement.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && geoElement.hasOwnProperty("feature"))) {
+      if (geoElement.feature.properties.RI_id == id) {
+        highlightLayer(geoElement);
+      }
+    }
+  });
+}
+
+function resetHighlightFromResultTable(id) {
+  map.eachLayer(function (geoElement) {
+    if (geoElement.options.pane.className != undefined && (geoElement.options.pane.className.includes("leaflet-pane leaflet-nationalInterests-pane") && geoElement.hasOwnProperty("feature"))) {
+      if (geoElement.feature.properties.RI_id == id) {
+        if (currentlyViewingAInterest != geoElement && filterLayers.includes(geoElement.feature.properties.RI_id) == false) {
+          if (filterLayers.length == 0) {
+            resetLayer(geoElement);
+          }
+          else {
+            dimLayer(geoElement);
+          }
+        }
+      }
+    }
+  });
+}
+

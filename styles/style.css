@@ -139,7 +139,7 @@ pre {
 
 .sidepanel .selection input {
   float: left;
-  min-width: 89.2%;
+  min-width: 25.8em;
   padding: 6px;
   font-size: 17px;
   border: solid #444;
@@ -153,7 +153,7 @@ pre {
 
 .sidepanel select {
   float: left;
-  width: 93%;
+  width: 26.9em;
   padding: 6px;
   font-size: 17px;
   border: solid #444;
@@ -174,8 +174,8 @@ pre {
 }
 
 /* DROPDOWN CHECKBOX */
-
 .dropdown-check-list {
+  position: relative;
   float: left;
   margin: 0.5em;
   font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
@@ -183,20 +183,22 @@ pre {
   max-width: 100%;
   min-width: 97%;
   border-radius: 3px;
+  z-index: 2;
 }
 
 .dropdown-check-list .itemsContainer {
-  max-height: 20em;
+  max-height: 30em;
   overflow-y: scroll;
   overflow-x: hidden;
   max-width: 97%;
+  z-index: 99;
 }
 
 .dropdown-check-list .anchor {
   position: relative;
   cursor: pointer;
   display: inline-block;
-  min-width: 83%;
+  min-width: 22.95em;
   padding: 5px 50px 5px 10px;
   border: solid #444;
   background-color: white;
@@ -226,13 +228,12 @@ pre {
   padding: 2px;
   display: none;
   margin: 0;
-  margin-right: 1.8em;
   border: 1px solid #ccc;
   border-top: none;
   color: black;
   background-color: white;
   font-size: 15px;
-  min-width: 100%;
+  width: 30em;
 }
 
 .dropdown-check-list ul.items li {
@@ -266,11 +267,12 @@ pre {
 /* För result-table */
 #result-table {
   position: absolute;
-  margin-top: 13em;
-  max-height: 53.5%;
+  margin-top: 13.5em;
+  max-height: 62.3em;
   max-width: 31em;
   overflow-y: scroll;
   overflow-x: hidden;
+  z-index: 1;
 }
 
 #result-table div{
@@ -319,8 +321,8 @@ pre {
   background-color: white;
   max-height: 0;
   overflow: hidden;
-  width: 27.25em;
-  margin-left: 0.45em;
+  width: 27.1em;
+  margin-left: 0.47em;
   transition: max-height 0.2s ease-out;
   border: solid;
   border-color: #D94E28;
