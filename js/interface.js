@@ -109,7 +109,9 @@ function openInResultTable(id) {
       coll[i].classList.add("active");
       var content = coll[i].nextElementSibling;
       openResult(content);
-      setTimeout(function(){ coll[i].nextElementSibling.scrollIntoView({behavior: "smooth", block: "end"}); }, 250);
+      setTimeout(function(){ 
+        coll[i].nextElementSibling.scrollIntoView({behavior: "smooth", block: "end"});
+    }, 250);
       break;
     }
   }
@@ -284,13 +286,11 @@ function openResult(content) {
 //Ändrar kartans storlek och result-table höjden när användaren ändrar webbläsarens storlek 
 function redraw() {
   var full_width = $('body').width();
-  var left_width = $('.sidepanel').width();
-  var left_height = $('.sidepanel').height();
-  $('#mapid').width(full_width - left_width - 1);
-  //$("#mapid").height(left_height);
-  console.log("Ye");
+  var sidepanel_width = $('.sidepanel').width();
+  $('#mapid').width(full_width - sidepanel_width - 1);
   $("#mapid").height(self.innerHeight - (document.getElementsByClassName("header")[0].offsetHeight + document.getElementsByClassName("divider")[0].offsetHeight)-20);
 
+  //Ändrar storlek på elementen inom sidomenyn
   var resultElement = document.getElementById("result-table").getBoundingClientRect();
   document.getElementById("result-table").style.maxHeight = String(Math.round(window.innerHeight-resultElement.top)) + "px";
   var sidePanelElement = document.getElementsByClassName("sidepanel")[0];
