@@ -287,7 +287,9 @@ function redraw() {
   var left_width = $('.sidepanel').width();
   var left_height = $('.sidepanel').height();
   $('#mapid').width(full_width - left_width - 1);
-  $("#mapid").height(left_height);
+  //$("#mapid").height(left_height);
+  console.log("Ye");
+  $("#mapid").height(self.innerHeight - (document.getElementsByClassName("header")[0].offsetHeight + document.getElementsByClassName("divider")[0].offsetHeight)-20);
 
   var resultElement = document.getElementById("result-table").getBoundingClientRect();
   document.getElementById("result-table").style.maxHeight = String(Math.round(window.innerHeight-resultElement.top)) + "px";
@@ -298,10 +300,7 @@ function redraw() {
   for (let index = 0; index < selectionElements.length; index++) {
     const element = selectionElements[index];
       element.style.minWidth = String(sidePanelElement.offsetWidth - 90) + "px";
-    
   }
-  
-
 }
 
 function highlightFromResultTable(id) {

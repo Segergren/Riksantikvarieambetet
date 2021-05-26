@@ -50,7 +50,7 @@ body {
 #mapid {
   margin: 0;
   float: right;
-  min-height: 100%;
+  /*min-height: 100%;*/
   /*max-width: 170em; */
 }
 
