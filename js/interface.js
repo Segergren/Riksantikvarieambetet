@@ -281,13 +281,27 @@ function openResult(content) {
   content.style.visibility = "visible";
 }
 
-//Ändrar kartans storlek när användaren ändrar webbläsarens storlek 
+//Ändrar kartans storlek och result-table höjden när användaren ändrar webbläsarens storlek 
 function redraw() {
   var full_width = $('body').width();
   var left_width = $('.sidepanel').width();
   var left_height = $('.sidepanel').height();
   $('#mapid').width(full_width - left_width - 1);
   $("#mapid").height(left_height);
+
+  var resultElement = document.getElementById("result-table").getBoundingClientRect();
+  document.getElementById("result-table").style.maxHeight = String(Math.round(window.innerHeight-resultElement.top)) + "px";
+  var sidePanelElement = document.getElementsByClassName("sidepanel")[0];
+  var anchorElement = document.getElementsByClassName("anchor")[0];
+  var selectionElements = document.getElementsByClassName("selection");
+  anchorElement.style.minWidth = String(sidePanelElement.offsetWidth - 95) + "px";
+  for (let index = 0; index < selectionElements.length; index++) {
+    const element = selectionElements[index];
+      element.style.minWidth = String(sidePanelElement.offsetWidth - 90) + "px";
+    
+  }
+  
+
 }
 
 function highlightFromResultTable(id) {

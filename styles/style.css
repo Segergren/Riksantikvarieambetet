@@ -139,8 +139,9 @@ pre {
 
 .sidepanel .selection input {
   float: left;
-  min-width: 90.7%;
+  min-width: 92%;
   padding: 6px;
+  padding-right: 0;
   font-size: 17px;
   border: solid #444;
   background-color: white;
@@ -155,6 +156,8 @@ pre {
   float: left;
   width: 94%;
   padding: 6px;
+  padding-right: 0;
+  padding-left: 0;
   font-size: 17px;
   border: solid #444;
   background-color: white;
@@ -268,7 +271,7 @@ pre {
 #result-table {
   position: absolute;
   margin-top: 13.5em;
-  max-height: 62.3em;
+  max-height: 75%;
   max-width: 31em;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -321,7 +324,7 @@ pre {
   background-color: white;
   max-height: 0;
   overflow: hidden;
-  width: 27.1em;
+  width: 27.25em;
   margin-left: 0.47em;
   transition: max-height 0.2s ease-out;
   border: solid;
@@ -366,7 +369,7 @@ pre {
     height: 7%;
   }
   .content {
-    width: 27.25em;
+    width: 93.2%;
   }
   #result-table{
     max-height: 56%;
@@ -377,7 +380,6 @@ pre {
   .sidepanel {
     max-width: 40%;
   }
-
   .sidepanel .selection input{
     min-width: 90%;
   }
@@ -385,7 +387,7 @@ pre {
     min-width: 80%;
   }
   .content {
-    width: 93.8%;
+    width: 93.2%;
   }
   .collapsible{
     min-width: 100%;
