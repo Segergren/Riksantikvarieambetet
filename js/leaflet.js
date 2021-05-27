@@ -163,11 +163,19 @@ function resetHighlight(geoElement) {
 
 //Lägger till län i sidopanelen samt i LIST_OF_COUNTIES-arrayen
 function onEachFeatureCounties(feature, layer) {
-  var countyOption = document.createElement('option');
-  countyOption.innerHTML = layer.feature.properties.LnNamn + " län";
-  countyOption.value = layer.feature.properties.LnKod;
-  countyElement.appendChild(countyOption);
   LIST_OF_COUNTIES.push(layer);
+  LIST_OF_COUNTIES.sort(function (a, b) {
+    if (a.feature.properties.namn < b.feature.properties.namn) { return -1; }
+    if (a.feature.properties.namn > b.feature.properties.namn) { return 1; }
+    return 0;
+  })
+  countyElement.innerHTML = '<option value="" selected="">Län</option>';
+  LIST_OF_COUNTIES.forEach(layerCounty => {
+    var countyOption = document.createElement('option');
+    countyOption.innerHTML = layerCounty.feature.properties.namn + " län";
+    countyOption.value = layerCounty.feature.properties.lanskod;
+    countyElement.appendChild(countyOption);
+  });
 }
 
 //Lägger till kommun i sidopanelen och i LIST_OF_MUNICIPALITY-arrayen
@@ -326,7 +334,7 @@ function flyToRiksintresse(informationElement) {
 function flyToCounty(countyID) {
   geojsonElement = null;
   LIST_OF_COUNTIES.forEach(layer => {
-    if (String(layer.feature.properties.LnKod) == String(countyID)) {
+    if (String(layer.feature.properties.lanskod) == String(countyID)) {
       geojsonElement = layer;
     }
   });
@@ -338,7 +346,7 @@ function flyToCounty(countyID) {
 function flyToMunicipality(municipalityID) {
   geojsonElement = null;
   LIST_OF_MUNICIPALITY.forEach(layer => {
-    if (String(layer.feature.properties.KnKod) == String(municipalityID)) {
+    if (String(layer.feature.properties.kommunkod) == String(municipalityID)) {
       geojsonElement = layer;
     }
   });

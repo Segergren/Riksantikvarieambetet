@@ -81,8 +81,8 @@ function loadMunicipalityList() {
   }
 
   municipalityFilterList.sort(function (a, b) {
-    if (a.feature.properties.KnNamn < b.feature.properties.KnNamn) { return -1; }
-    if (a.feature.properties.KnNamn > b.feature.properties.KnNamn) { return 1; }
+    if (a.feature.properties.namn < b.feature.properties.namn) { return -1; }
+    if (a.feature.properties.namn > b.feature.properties.namn) { return 1; }
     return 0;
   })
   municipalityElement.innerHTML = "";
@@ -93,8 +93,8 @@ function loadMunicipalityList() {
 
   municipalityFilterList.forEach(municipality => {
     var municipalityListElement = document.createElement('option');
-    municipalityListElement.innerHTML = municipality.feature.properties.KnNamn;
-    municipalityListElement.value = municipality.feature.properties.KnKod;
+    municipalityListElement.innerHTML = municipality.feature.properties.namn;
+    municipalityListElement.value = municipality.feature.properties.kommunkod;
     municipalityElement.appendChild(municipalityListElement);
   });
 }
@@ -239,7 +239,7 @@ const countyElement = document.querySelector('#county');
 countyElement.addEventListener('change', () => {
   municipalityFilterList.length = 0;
   LIST_OF_MUNICIPALITY.forEach(municipality => {
-    if (String(municipality.feature.properties.KnKod).substring(0, 2) == String(countyElement.value)) {
+    if (String(municipality.feature.properties.kommunkod).substring(0, 2) == String(countyElement.value)) {
       municipalityFilterList.push(municipality);
     }
   });
