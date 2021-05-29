@@ -2,9 +2,7 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="content-type" content="text/html" charset="ISO-8859-1" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles/style.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
@@ -20,7 +18,7 @@
 
 <body>
   <div class="header">
-    <img src="https://o11.se/RAA/rikssök.png">
+    <img src="https://o11.se/RAA/rikssök.png" alt="Logotyp">
     <p id="number-of-elements"></p>
   </div>
   <div class="divider"></div>
@@ -50,7 +48,7 @@
       <div id="result-table">
       </div>
   </div>
-  <div id="mapid" style="width: 100%; height: 600px; position: relative;"></div>
+  <div id="mapid"></div>
   <div id="map-overlay" class="map-overlay"></div>
   </div>
 
@@ -58,7 +56,7 @@
   <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
   <script src="https://o11.se/RAA/proj4.js"></script>
   <script src="https://o11.se/RAA/proj4leaflet.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/proj4js/2.5.0/proj4.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.5.0/proj4.js"></script>
   <script src='js/data-handler.js'></script>
   <script src='js/interface.js'></script>
   <script src='js/leaflet.js'></script>

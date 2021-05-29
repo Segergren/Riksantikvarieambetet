@@ -23,4 +23,4 @@ window.setInterval(function () {
     documentHeight = $('.sidepanel').height();
     redraw();
   }
-}, 100);
+}, 1000);

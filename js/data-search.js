@@ -154,8 +154,6 @@ function searchNationalInterests() {
   });
 
   showFoundInterests(filteredNationalInterests);
-
-  console.log(filteredNationalInterests.length);
   if(filteredNationalInterests.length == 0){
     resetAllLayers();
   }

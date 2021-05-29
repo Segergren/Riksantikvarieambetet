@@ -293,14 +293,6 @@ function redraw() {
   //Ändrar storlek på elementen inom sidomenyn
   var resultElement = document.getElementById("result-table").getBoundingClientRect();
   document.getElementById("result-table").style.maxHeight = String(Math.round(window.innerHeight-resultElement.top)) + "px";
-  var sidePanelElement = document.getElementsByClassName("sidepanel")[0];
-  var anchorElement = document.getElementsByClassName("anchor")[0];
-  var selectionElements = document.getElementsByClassName("selection");
-  anchorElement.style.minWidth = String(sidePanelElement.offsetWidth - 95) + "px";
-  for (let index = 0; index < selectionElements.length; index++) {
-    const element = selectionElements[index];
-      element.style.minWidth = String(sidePanelElement.offsetWidth - 90) + "px";
-  }
 }
 
 function highlightFromResultTable(id) {

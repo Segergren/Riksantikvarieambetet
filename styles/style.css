@@ -50,6 +50,8 @@ body {
 #mapid {
   margin: 0;
   float: right;
+  width: 75%;
+  height: 95%;
   /*min-height: 100%;*/
   /*max-width: 170em; */
 }
@@ -316,7 +318,6 @@ pre {
 }
 
 /* Innanför resultat */
-
 .content {
   border-radius: 0px 0px 2px 2px;
   padding: 0 18px;
@@ -364,37 +365,34 @@ pre {
   /* - symbol */
 }
 
+@media screen and (min-width: 2500px) {
+  .content {
+    width: 88.2%;
+  }
+}
+
 @media screen and (max-width: 1400px) {
   .header {
     height: 7%;
   }
-  #result-table{
-    max-height: 56%;
-  }
-}
-
-@media screen and (max-width: 992px) {
   .sidepanel {
-    max-width: 40%;
+    max-width: 20em;
   }
   .sidepanel .selection input{
-    min-width: 90%;
+    min-width: 17.1em;
   }
   .dropdown-check-list .anchor {
-    min-width: 80%;
+    min-width: 13.88em;
   }
   .content {
-    width: 93.2%;
+    width: 17.4em;
   }
   .collapsible{
     min-width: 100%;
   }
-  .dropdown-check-list .anchor{
-    min-width: 81.8%;
-  }
   #result-table{
-    max-width: 37%;
-    padding-right: 3%;
+    max-width: 19.05em;
+    padding-right: 1em;
     max-height: 50%;
   }
 }
