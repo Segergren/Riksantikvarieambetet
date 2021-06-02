@@ -165,7 +165,7 @@ function clearResultTable() {
   var coll = document.getElementsByClassName("collapsible");
   var collapsibleCount = coll.length - 1;
   var removeArray = [];
-  for (i = 0; i < collapsibleCount; i++) {
+  for (i = 0; i <= collapsibleCount; i++) {
     if (!coll[i].classList.contains("active")) {
       removeArray.push(coll[i].parentElement);
     }

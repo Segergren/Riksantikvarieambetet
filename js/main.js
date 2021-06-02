@@ -17,10 +17,6 @@ $(window).resize(function () {
 });
 
 //Gör så att höjden på kartan blir lika lång som hemsidan är.
-let documentHeight = 0;
 window.setInterval(function () {
-  if (documentHeight != $('.sidepanel').height()) {
-    documentHeight = $('.sidepanel').height();
     redraw();
-  }
 }, 1000);
