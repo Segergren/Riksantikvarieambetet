@@ -163,11 +163,16 @@ function highlightOnResultTable(geoElement) {
 //Tar bort samtliga riksintressen från result-table om de inte är aktiva
 function clearResultTable() {
   var coll = document.getElementsByClassName("collapsible");
-  for (i = 0; i < coll.length - 1; i++) {
+  var collapsibleCount = coll.length - 1;
+  var removeArray = [];
+  for (i = 0; i < collapsibleCount; i++) {
     if (!coll[i].classList.contains("active")) {
-      coll[i].parentElement.remove();
+      removeArray.push(coll[i].parentElement);
     }
   }
+  removeArray.forEach(element => {
+    element.remove();
+  });
 }
 
 //Tar bort ett riksintresse från result-table baserat på index

@@ -2,6 +2,7 @@ let environmentFilterList = [];
 let municipalityFilterList = [];
 let currentlyViewingAInterest = null;
 let filterLayers = [];
+var timeoutHandler;
 
 var resetStyle = {
   color: "#e6a72e",
@@ -47,37 +48,41 @@ function AddBackgroundMap() {
   fillMapWithMunicipality();
 
   //När användaren flyttar på kartan
-  map.on('zoomend', function () {
-    updateResultTableOnMove();
+  map.on('zoomend dragend', function () {
+    window.clearTimeout(timeoutHandler);
+    timeoutHandler = window.setTimeout(function() {
+      map.fire('idle');
+    }, 500);
   });
-  map.on('dragend', function () {
+
+  map.on('idle', function () {
     updateResultTableOnMove();
   });
 }
+
 
 //Uppdatera result-table när användaren flyttar på kartan
 function updateResultTableOnMove() {
   let layersInsideZoomRange = getLayersInView();
   clearResultTable();
-  let inserted = document.getElementsByClassName("collapsible").length;
+  let inserted = document.getElementById("result-table").childElementCount;
   let filteredFeatures = [];
   searchNationalInterests().forEach(layer => {
     filteredFeatures.push(layer.feature);
   });
-
   layersInsideZoomRange.forEach(layer => {
     let nationalInterestInformation = inserted < 20 ? findConnectedInformation(layer) : null;
     if (nationalInterestInformation != null) {
       if (filteredFeatures.length > 0) {
         if (filteredFeatures.includes(layer)) {
-          let addedInterest = addInterestToResultTable(nationalInterestInformation, layer, true);
+          let addedInterest = addInterestToResultTable(nationalInterestInformation);
           if (addedInterest != false) {
             inserted++;
           }
         }
       }
       else {
-        let addedInterest = addInterestToResultTable(nationalInterestInformation, layer, true);
+        let addedInterest = addInterestToResultTable(nationalInterestInformation);
         if (addedInterest != false) {
           inserted++;
         }
