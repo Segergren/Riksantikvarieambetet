@@ -25,9 +25,11 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
+<a href="https://segergren.dev/projects/RAA/Riksantikvarieämbetet.pdf">View the documentation (PDF)</a>
+
 _Swedish_
 
-Kunden efterfrågade är en interaktiv karta som innehåller information angående Sveriges riksintressen för kulturmiljövården. Systemet förväntades ersätta nuvarande lösning som utgörs av en karta i form av en bild med dokument som innefattar varje riksintresses individuella information. För att lösa uppdraget så har tidigare studier granskats för att hitta användbara metoder och modeller som kan ligga till grund för arbetet. Syftet med arbetet, utöver att utveckla systemet, är hur informationen ska få en ökad användbarhet och tillgängliggöras för en bredare målgrupp. 
+Kunden efterfrågade en interaktiv karta som innehåller information angående Sveriges riksintressen för kulturmiljövården. Systemet förväntades ersätta nuvarande lösning som utgörs av en karta i form av en bild med dokument som innefattar varje riksintresses individuella information. För att lösa uppdraget så har tidigare studier granskats för att hitta användbara metoder och modeller som kan ligga till grund för arbetet. Syftet med arbetet, utöver att utveckla systemet, är hur informationen ska få en ökad användbarhet och tillgängliggöras för en bredare målgrupp. 
 
 Designarbetet resulterade i en prototyp av webbsida med interaktiv karta innehållande spatialdata på riksintressen, med tillhörande sök- och filtreringsfunktioner samt resultat av information gällande enskilda riksintressen. Prototypen har utvecklats i JavaScript och använder sig av det webbaserade geografiska bibliotekramverket Leaflet för hantering av kartintegrering och rendering. Prototypen har presenterats för kund, där det argumenteras för att lösningens resultat till viss del uppnår de satta mål.  
 
