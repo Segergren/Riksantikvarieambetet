@@ -52,4 +52,4 @@ Designarbetet resulterade i en prototyp av webbsida med interaktiv karta innehå
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[product-screenshot]: https://segergren.dev/images/riksantikvarieambetet-demo.png
+[product-screenshot]: https://segergren.dev/projects/RAA/riksantikvarieambetet-demo.png
