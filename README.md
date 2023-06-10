@@ -7,7 +7,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/O11Software/Riksantikvarieambetet">
-    <img src="https://segergren.dev/projects/RAA/rikss%C3%B6k.png" alt="Logo" width="710" height="76.5">
+    <img src="https://segergren.dev/projects/RAA/rikssökv2.png" alt="Logo" width="710" height="76.5">
   </a>
 
   <p align="center">
